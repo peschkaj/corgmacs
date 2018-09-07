@@ -247,6 +247,114 @@ backends will still be included.")
   ;; Use `prescient' for Company menus.
   (company-prescient-mode +1))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; version control configuration
+;; Feature `vc-hooks' provides hooks for the Emacs VC package. We
+;; don't use VC, because Magit is superior in pretty much every way.
+(use-package vc-hooks
+  :config
+
+  ;; Disable VC. This improves performance and disables some annoying
+  ;; warning messages and prompts, especially regarding symlinks. See
+  ;; https://stackoverflow.com/a/6190338/3538165.
+  (setq vc-handled-backends nil))
+
+;; Package `magit' provides a full graphical interface for Git within
+;; Emacs.
+(use-package magit
+  :bind (;; This is the primary entry point for Magit. Binding to C-x
+         ;; g is recommended in the manual:
+         ;; https://magit.vc/manual/magit.html#Getting-Started
+         ("C-x g" . magit-status))
+
+  :init
+
+  ;; Suppress the message we get about "Turning on
+  ;; magit-auto-revert-mode" when loading Magit.
+  (setq magit-no-message '("Turning on magit-auto-revert-mode..."))
+
+  :config
+
+  ;; Enable C-c M-g as a shortcut to go to a popup of Magit commands
+  ;; relevant to the current file.
+  (global-magit-file-mode +1)
+
+  ;; The default location for git-credential-cache is in
+  ;; ~/.config/git/credential. However, if ~/.git-credential-cache/
+  ;; exists, then it is used instead. Magit seems to be hardcoded to
+  ;; use the latter, so here we override it to have more correct
+  ;; behavior.
+  (unless (file-exists-p "~/.git-credential-cache/")
+    (let* ((xdg-config-home (or (getenv "XDG_CONFIG_HOME")
+                                (expand-file-name "~/.config/")))
+           (socket (expand-file-name "git/credential/socket" xdg-config-home)))
+      (setq magit-credential-cache-daemon-socket socket)))
+
+  ;; Allow pulling with --rebase just once, without needing to
+  ;; configure pull.rebase permanently. See
+  ;; https://github.com/magit/magit/issues/2597#issuecomment-201392835.
+  (magit-define-popup-switch 'magit-pull-popup ?r "Rebase" "--rebase"))
+
+;; Package `gh' provides an Elisp interface to the GitHub API.
+(use-package gh
+  ;; Disable autoloads because this package autoloads *way* too much
+  ;; code. See https://github.com/sigma/gh.el/issues/95.
+  :defer t
+)
+
+;; Package `magit-gh-pulls' adds a section to Magit which displays
+;; open pull requests on a corresponding GitHub repository, if any,
+;; and allows you to check them out locally.
+(use-package magit-gh-pulls
+  :demand t
+  :after magit
+  :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
+
+  :blackout t)
+
+;; Package `git-commit' allows you to use Emacsclient as a Git commit
+;; message editor, providing syntax highlighting and using
+;; `with-editor' to allow you to conveniently accept or abort the
+;; commit.
+(use-package git-commit
+  :init
+
+  (defun git-commit-setup-check-buffer ()
+    (and buffer-file-name
+         (string-match-p git-commit-filename-regexp buffer-file-name)
+         (git-commit-setup)))
+
+  (define-minor-mode global-git-commit-mode
+    "Edit Git commit messages.
+This global mode arranges for `git-commit-setup' to be called
+when a Git commit message file is opened.  That usually happens
+when Git uses the Emacsclient as $GIT_EDITOR to have the user
+provide such a commit message."
+    :group 'git-commit
+    :type 'boolean
+    :global t
+    :init-value t
+    :initialize (lambda (symbol exp)
+                  (custom-initialize-default symbol exp)
+                  (when global-git-commit-mode
+                    (add-hook 'find-file-hook 'git-commit-setup-check-buffer)))
+    (if global-git-commit-mode
+        (add-hook  'find-file-hook 'git-commit-setup-check-buffer)
+      (remove-hook 'find-file-hook 'git-commit-setup-check-buffer)))
+
+  :init
+
+  (global-git-commit-mode +1)
+
+  :config
+
+  ;; Max length for commit message summary is 50 characters as per
+  ;; https://chris.beams.io/posts/git-commit/.
+  (setq git-commit-summary-max-length 50))
+
+
+
 ;(global-set-key "\C-cd" 'dash-at-point)
 ;(global-set-key "\C-ce" 'dash-at-point-with-docset)
 
@@ -881,7 +989,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(package-selected-packages
    (quote
-    (company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
