@@ -53,3 +53,4 @@ flycheck_*.el
 auto-save-list/
 elpa/
 tmp/
+var/

@@ -1,11 +1,22 @@
+;;; corgmacs --- Summary
+;;;
+;;; Being the emacs configuration of Jeremiah Peschka
+;;;
+;;; Commentary:
+;;; Please don't provide any, this is garbage.
+;;;
+;;; Code:
+;;; Code goes here, moron.
+
 ;; Set up list of package repositories
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
                          ("melpa-stable" . "http://stable.melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 
-;; avoid problems with files newer than their byte-compiled counterparts
-;; it's better a lower startup than load an outdated and maybe bugged package
+;; avoid problems with files newer than their byte-compiled
+;; counterparts it's better to have a slower startup than load an
+;; outdated and maybe bugged package
 (setq load-prefer-newer t)
 ;; initialize the packages and create the packages list if not exists
 (package-initialize)
@@ -36,6 +47,7 @@
   (require 'use-package)
   (require 'ibuffer))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Blackout - control the mode line
 (add-to-list 'load-path "~/src/blackout")
@@ -57,7 +69,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pretty parens and curly bois
 (use-package rainbow-delimiters)
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'prog-mode-hook
+          #'rainbow-delimiters-mode)
+;; smartparens cheatsheet can be found at
+;; https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
+(require 'smartparens-config)
+
+(add-hook 'prog-mode-hook
+          #'smartparens-strict-mode)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,6 +90,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helm
 (require 'helm)
+(use-package helm-bibtex)
 ;; enable fuzzy match
 (setq helm-mode-fuzzy-match                 t
       helm-completion-in-region-fuzzy-match t
@@ -102,6 +122,9 @@
 (global-set-key (kbd "C-c i")                        'helm-imenu-in-all-buffers)
 ;(global-set-key (kbd "<f11> o")                      'helm-org-agenda-files-headings)
 (global-set-key (kbd "C-s")                          'helm-occur)
+;; (progn (define-key prog-mode-map (kbd "C-s") 'helm-occur)
+;;        (define-key text-mode-map (kbd "C-s") 'helm-occur))
+
 (define-key global-map [remap jump-to-register]      'helm-register)
 (define-key global-map [remap list-buffers]          'helm-mini)
 (define-key global-map [remap dabbrev-expand]        'helm-dabbrev)
@@ -300,8 +323,7 @@ backends will still be included.")
 (use-package gh
   ;; Disable autoloads because this package autoloads *way* too much
   ;; code. See https://github.com/sigma/gh.el/issues/95.
-  :defer t
-)
+  :defer t)
 
 ;; Package `magit-gh-pulls' adds a section to Magit which displays
 ;; open pull requests on a corresponding GitHub repository, if any,
@@ -354,9 +376,75 @@ provide such a commit message."
   (setq git-commit-summary-max-length 50))
 
 
+(exec-path-from-shell-initialize)
 
-;(global-set-key "\C-cd" 'dash-at-point)
-;(global-set-key "\C-ce" 'dash-at-point-with-docset)
+(pdf-tools-install)
+(define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+
+(latex-preview-pane-enable)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Flycheck
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; haskell
+(use-package haskell-mode
+  :config
+
+  ;; Disable in-buffer underlining of errors and warnings, since we
+  ;; already have them from Flycheck.
+  (setq haskell-process-show-overlays nil)
+
+  ;; Enable REPL integration.
+  (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
+
+  ;; Work around upstream bug, see
+  ;; https://github.com/haskell/haskell-mode/issues/1553.
+
+  (setq haskell-process-args-ghci
+        '("-ferror-spans" "-fshow-loaded-modules"))
+
+  (setq haskell-process-args-cabal-repl
+        '("--ghc-options=-ferror-spans -fshow-loaded-modules"))
+
+  (setq haskell-process-args-stack-ghci
+        '("--ghci-options=-ferror-spans -fshow-loaded-modules"
+          "--no-build" "--no-load"))
+
+  (setq haskell-process-args-cabal-new-repl
+        '("--ghc-options=-ferror-spans -fshow-loaded-modules"))
+
+  ;; Allow `haskell-mode' to use Stack with the global project instead
+  ;; of trying to invoke GHC directly, if not inside any sort of
+  ;; project.
+  (setq haskell-completion-backend 'ghci)
+  (setq haskell-process-type 'stack-ghci))
+
+(add-to-list 'load-path "~/src/lsp-haskell")
+(add-to-list 'load-path "~/src/lsp-mode")
+(add-to-list 'load-path "~/src/lsp-ui")
+
+(require 'lsp-ui)
+(require 'lsp-haskell)
+(add-hook 'lsp-mode-hook 'lsp-ui-mode)
+(add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+(add-hook 'haskell-mode-hook 'flycheck-mode)
+(setq lsp-haskell-process-path-hie "hie-wrapper")
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dash at point
+;;
+;; Uses dash to provide detailed documentation look up based on current mode
+(use-package dash-at-point)
+(global-set-key "\C-cd" 'dash-at-point)
+(global-set-key "\C-ce" 'dash-at-point-with-docset)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ace-window
@@ -699,25 +787,25 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   :config
   (progn
     ;; set the modules enabled by default
-    (setq org-modules '(
-        org-bbdb
-        org-bibtex
-        org-docview
-        org-mhe
-        org-rmail
-        org-crypt
-        org-protocol
-        org-gnus
-        org-id
-        org-info
-        org-habit
-        org-irc
-        org-annotate-file
-        org-eval
-        org-expiry
-        org-man
-        org-panel
-        org-toc))
+    (setq org-modules '(org-bbdb
+                        org-bibtex
+                        org-docview
+                        org-mhe
+                        org-rmail
+                        org-crypt
+                        org-protocol
+                        org-gnus
+                        org-id
+                        org-info
+                        org-habit
+                        org-irc
+                        org-annotate-file
+                        org-eval
+                        org-expiry
+                        org-man
+                        org-panel
+                        org-toc)
+          fill-column 80)
 
     ;; set default directories
     (setq org-directory (concat jp/docs "org/"))
@@ -901,6 +989,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MOAR ORG
 ;;
+;; enable auto-fill-mode for org
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
 ;; org-journal gives C-c C-j to create a new journal entry
 (use-package org-journal)
 ;; pretty bullets
@@ -967,6 +1057,101 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     (ns-raise-emacs)))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pretty symbols
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+
+(defconst pragmatapro-prettify-symbols-alist
+  (mapcar (lambda (s)
+            `(,(car s)
+              .
+              ,(vconcat
+                (apply 'vconcat (make-list (- (length (car s)) 1) (vector (decode-char 'ucs #X0020) '(Br . Bl))))
+                (vector (decode-char 'ucs (cadr s))))))
+          '(("[ERROR]"   #XE380)
+            ("[DEBUG]"   #XE381)
+            ("[INFO]"    #XE382)
+            ("[WARN]"    #XE383)
+            ("[WARNING]" #XE384)
+            ("[ERR]"     #XE385)
+            ("[FATAL]"   #XE386)
+            ("[TRACE]"   #XE387)
+            ("[FIXME]"   #XE388)
+            ("[TODO]"    #XE389)
+            ("TODO"      #XE389)
+            ("[BUG]"     #XE38A)
+            ("[NOTE]"    #XE38B)
+            ("[HACK]"    #XE38C)
+            ("[MARK]"    #XE38D)
+            (":/"        #XE9B9)
+            (":\\"       #XE9BA)
+            (":3"        #XE9BB)
+            (":D"        #XE9BC)
+            (":P"        #XE9BD)
+            (":>:"       #XE9BE)
+            (":<:"       #XE9BF)
+            ("<\\>"      #XE9DD)
+            (">-"        #XEA20)
+            (">="        #XEA21)
+            (">>"        #XEA22)
+            (">>-"       #XEA23)
+            (">>="       #XEA24)
+            (">>>"       #XEA25)
+            (">=>"       #XEA26)
+            (">>^"       #XEA27)
+            ("??"        #XEA40)
+            ("?~"        #XEA41)
+            ("?="        #XEA42)
+            ("?>"        #XEA43)
+            ("???"       #XEA44)
+            ("^="        #XEA48)
+            ("^."        #XEA49)
+            ("^?"        #XEA4A)
+            ("^.."       #XEA4B)
+            ("^<<"       #XEA4C)
+            ("^>>"       #XEA4D)
+            ("^>"        #XEA4E)
+            ("\\\\"      #XEA50)
+            ("\\>"       #XEA51)
+            ("\\/-"      #XEA52))))
+
+(defun fp-prettify-symbols ()
+  (mapc (lambda (pair) (push pair prettify-symbols-alist))
+        ;; Need a way to make this work with comments as well.
+        '(
+          ("\\" . ?λ)
+          ("*" . ?⋅)
+          ("forall" . ?∀)
+          ("forAll" . ?∀)
+          ("all"    . ?∀)
+          ("exists" . ?∃)
+          ("undefined" . ?⊥)
+          ("elem" . ?∈)
+          ("flip elem" . ?∋)
+          ("notElem" . ?∉)
+          ("flip notElem" . ?∌)
+          ("member" . ?∈)
+          ("notMember" . ?∉)
+          ("union" . ?⋃)
+          ("intersection" . ?⋂)
+          ("isSubsetOf" . ?⊆)
+          ("isProperSubsetOf" . ?⊂)
+          (" . " . (? (Br . Bl) ?◦ (Br . Bl) ? ))
+          ("/" . ?÷)
+          ("div" . ?÷)
+          ("quot" . ?÷))))
+
+(add-hook 'haskell-mode-hook #'fp-prettify-symbols)
+
+(defun add-pragmatapro-prettify-symbols-alist ()
+  (dolist (alias pragmatapro-prettify-symbols-alist)
+    (push alias prettify-symbols-alist)))
+
+(add-hook 'prog-mode-hook
+          #'add-pragmatapro-prettify-symbols-alist)
+
+(global-prettify-symbols-mode +1)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Disable smooth scrolling
@@ -989,7 +1174,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(package-selected-packages
    (quote
-    (gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
