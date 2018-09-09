@@ -473,9 +473,9 @@ provide such a commit message."
   (setq haskell-completion-backend 'ghci)
   (setq haskell-process-type 'stack-ghci))
 
-(add-to-list 'load-path "~/src/lsp-haskell")
-(add-to-list 'load-path "~/src/lsp-mode")
-(add-to-list 'load-path "~/src/lsp-ui")
+(add-to-list 'load-path "~/src/lsp-haskell/")
+(add-to-list 'load-path "~/src/lsp-mode/")
+(add-to-list 'load-path "~/src/lsp-ui/")
 
 (require 'lsp-ui)
 (require 'lsp-haskell)
@@ -483,7 +483,6 @@ provide such a commit message."
 (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
 (add-hook 'haskell-mode-hook 'flycheck-mode)
 (setq lsp-haskell-process-path-hie "hie-wrapper")
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -708,7 +707,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (blink-cursor-mode -1)
 
 ;; more thinner window divisions
-(fringe-mode '(1 . 1))
+;(fringe-mode '(1 . 1))
 
 ;; use ibuffer by default
 (defalias 'list-buffers 'ibuffer)
@@ -807,6 +806,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; lisp goodness
 (defun close-all-parentheses ()
+  "Closes all parenthesis."
   (interactive "*")
   (let ((closing nil))
     (save-excursion
@@ -826,11 +826,11 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up base folders for documents and PDFs and such...
-(defvar jp/docs (expand-file-name "~/Documents/") "Documents folder")
-(defvar jp/papers-base (concat jp/docs "reading/") "Location for reading library including PDFs, bibliography, and notes")
-(defvar jp/papers-pdfs (concat jp/papers-base "lib/") "PDF folder")
-(defvar jp/papers-notes (concat jp/papers-base "index.org") "Default location for notes about papers")
-(defvar jp/papers-refs  (concat jp/papers-base "index.bib") "Bibliography")
+(defvar jp/docs (expand-file-name "~/Documents/") "Documents folder.")
+(defvar jp/papers-base (concat jp/docs "reading/") "Location for reading library including PDFs, bibliography, and notes.")
+(defvar jp/papers-pdfs (concat jp/papers-base "lib/") "PDF folder.")
+(defvar jp/papers-notes (concat jp/papers-base "index.org") "Default location for notes about papers.")
+(defvar jp/papers-refs  (concat jp/papers-base "index.bib") "Bibliography.")
 (setq bibtex-completion-bibliography (list jp/papers-refs)
       bibtex-completion-library-path jp/papers-pdfs
       bibtex-completion-notes-path   jp/papers-notes
@@ -1001,10 +1001,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
        (format "'%s'" msg)))                                ;; passed to -message in terminal-notifier call
     (setq appt-disp-window-function (function my-appt-display))
 
-
-
-
-    ;; t - Prompt for a title and then add to notes.org unless you refile it
+    
+    ;; t - Prompt for a title and then add to index.org unless you refile it
     (setq org-capture-templates
           '(("t" "todo" entry (file jp/org-inbox-file)
              "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
@@ -1191,6 +1189,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
             ("\\/-"      #XEA52))))
 
 (defun fp-prettify-symbols ()
+  "Make the letters pretty!"
   (mapc (lambda (pair) (push pair prettify-symbols-alist))
         ;; Need a way to make this work with comments as well.
         '(
@@ -1219,6 +1218,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (add-hook 'haskell-mode-hook #'fp-prettify-symbols)
 
 (defun add-pragmatapro-prettify-symbols-alist ()
+  "Make sure the letters are pretty when we use Pragmata Pro."
   (dolist (alias pragmatapro-prettify-symbols-alist)
     (push alias prettify-symbols-alist)))
 
