@@ -21,6 +21,18 @@
 ;; initialize the packages and create the packages list if not exists
 (package-initialize)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; benchmark-init
+;;
+;; Uncomment this if emacs is being slow on startup.
+;; View important timing stats with M-x bencmark-init/show-durations-tabluation
+;;
+;; (use-package benchmark-init
+;;   :ensure t
+;;   :config
+;;   ;; To disable collection of benchmark data after init is done.
+;;   (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
 (when (not package-archive-contents)
   (package-refresh-contents))
 
@@ -63,12 +75,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yay for custom menus via hydra
-(use-package hydra)
+(use-package hydra
+  :ensure t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pretty parens and curly bois
-(use-package rainbow-delimiters)
+(use-package rainbow-delimiters
+  :ensure t)
 (add-hook 'prog-mode-hook
           #'rainbow-delimiters-mode)
 ;; smartparens cheatsheet can be found at
@@ -83,14 +97,16 @@
 ;; restart emacs
 ;;
 ;; Provides a way to quit or restart emacs, bound to C-x r r
-(use-package restart-emacs)
+(use-package restart-emacs
+  :ensure t)
 (define-key global-map (kbd "C-x r r") 'restart-emacs)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helm
 (require 'helm)
-(use-package helm-bibtex)
+(use-package helm-bibtex
+  :ensure t)
 ;; enable fuzzy match
 (setq helm-mode-fuzzy-match                 t
       helm-completion-in-region-fuzzy-match t
@@ -147,6 +163,7 @@
 ;; Company allows for multiple frontends to display the candidates,
 ;; such as a tooltip menu. Company stands for "Complete Anything".
 (use-package company
+  :ensure t
   :defer 3
   :init
 
@@ -286,6 +303,7 @@ backends will still be included.")
 ;; Package `magit' provides a full graphical interface for Git within
 ;; Emacs.
 (use-package magit
+  :ensure t
   :bind (;; This is the primary entry point for Magit. Binding to C-x
          ;; g is recommended in the manual:
          ;; https://magit.vc/manual/magit.html#Getting-Started
@@ -321,6 +339,7 @@ backends will still be included.")
 
 ;; Package `gh' provides an Elisp interface to the GitHub API.
 (use-package gh
+  :ensure t
   ;; Disable autoloads because this package autoloads *way* too much
   ;; code. See https://github.com/sigma/gh.el/issues/95.
   :defer t)
@@ -329,6 +348,7 @@ backends will still be included.")
 ;; open pull requests on a corresponding GitHub repository, if any,
 ;; and allows you to check them out locally.
 (use-package magit-gh-pulls
+  :ensure t
   :demand t
   :after magit
   :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
@@ -340,6 +360,7 @@ backends will still be included.")
 ;; `with-editor' to allow you to conveniently accept or abort the
 ;; commit.
 (use-package git-commit
+  :ensure t
   :init
 
   (defun git-commit-setup-check-buffer ()
@@ -378,8 +399,35 @@ provide such a commit message."
 
 (exec-path-from-shell-initialize)
 
-(pdf-tools-install)
-(define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+(setq pdf-view-use-unicode-ligther nil)
+
+(use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-width)
+  (bind-keys :map pdf-view-mode-map
+             ("\\" . hydra-pdftools/body)
+             ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
+             ("g"  . pdf-view-first-page)
+             ("G"  . pdf-view-last-page)
+             ("l"  . image-forward-hscroll)
+             ("h"  . image-backward-hscroll)
+             ("j"  . pdf-view-next-page)
+             ("k"  . pdf-view-previous-page)
+             ("e"  . pdf-view-goto-page)
+             ("u"  . pdf-view-revert-buffer)
+             ("al" . pdf-annot-list-annotations)
+             ("ad" . pdf-annot-delete)
+             ("aa" . pdf-annot-attachment-dired)
+             ("am" . pdf-annot-add-markup-annotation)
+             ("at" . pdf-annot-add-text-annotation)
+             ("y"  . pdf-view-kill-ring-save)
+             ("i"  . pdf-misc-display-metadata)
+             ("s"  . pdf-occur)
+             ("b"  . pdf-view-set-slice-from-bounding-box)
+             ("r"  . pdf-view-reset-slice))
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
 (latex-preview-pane-enable)
 
@@ -685,6 +733,28 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (unless (file-exists-p jp/emacs-temp-directory)
   (make-directory jp/emacs-temp-directory))
 
+;; Change the autosave location
+(defvar jp/emacs-autosave-directory (concat user-emacs-directory "auto-save/"))
+(unless (file-exists-p jp/emacs-autosave-directory)
+  (make-directory jp/emacs-autosave-directory))
+(setq backup-directory-alist `(("." . ,jp/emacs-autosave-directory)))
+(setq auto-save-list-file-prefix jp/emacs-autosave-directory)
+(setq auto-save-file-name-transforms `((".*" ,jp/emacs-autosave-directory t)))
+(setq make-backup-files t               ; backup of a file the first time it is saved.
+      backup-by-copying t               ; don't clobber symlinks
+      version-control t                 ; version numbers for backup files
+      delete-old-versions t             ; delete excess backup files silently
+      delete-by-moving-to-trash t
+      kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+      kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+      auto-save-default t               ; auto-save every buffer that visits a file
+      auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+      auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+      )
+
+
+
+
 ;; Let's keep some command history
 (setq-default history-length 1000)
 (setq savehist-file (concat jp/emacs-temp-directory "history")
@@ -772,7 +842,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
                                           (t             . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*}"))
       bibtex-completion-additional-search-fields '(keywords journal title)
       reftex-default-bibliography  (list jp/papers-refs)
-      ;org-ref-completion-libary 'org-ref-helm-cite
+      org-ref-completion-libary   'org-ref-helm-cite
       org-ref-notes-directory      jp/papers-base
       org-ref-bibliography-notes   jp/papers-notes
       org-ref-default-bibliography (list jp/papers-refs)
@@ -782,7 +852,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode
 (use-package org
-  :defer 1
+  ;:defer 1
   :ensure org-plus-contrib
   :config
   (progn
@@ -851,7 +921,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ;; tasks management
     (setq org-log-done t)
     (setq org-clock-idle-time nil)
-    (setq org-todo-keywords '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)"))
+    (setq org-todo-keywords '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
           org-habit-graphs-everywhere t                                            ;; Configuring display of org-habit in the agenda buffer
           org-habit-graph-column 80
           org-habit-preceding-days 14
@@ -986,6 +1056,11 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ;; limit images width
     (setq org-image-actual-width '(800))))
 
+(use-package org-ref
+  :after org)
+(use-package doi-utils
+  :after org-ref)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MOAR ORG
 ;;
@@ -1035,7 +1110,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (if (fboundp 'mac-auto-operator-composition-mode)
     (mac-auto-operator-composition-mode))
 
-(set-frame-font "PragmataPro Liga 16" t t)
+(set-default-font "PragmataPro Liga 16" t t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1161,7 +1236,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load theme as the very last activity
-(load-theme 'challenger-deep t)
+;; (load-theme 'challenger-deep t)
+(load-theme 'tangotango t)
 
 
 (custom-set-variables
@@ -1171,10 +1247,10 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
+    ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(package-selected-packages
    (quote
-    (latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
