@@ -697,9 +697,11 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
       visible-bell t                          ;; remove the annoying beep
       apropos-do-all t                        ;; apropos commands perform more extensive searches than default
       large-file-warning-threshold 100000000  ;; warn only when opening files bigger than 100MB
-      fill-column 80                          ;; 70 columns isn't enough
       display-time-default-load-average nil   ;; nobody needs load average
       display-time-24hr-format 1)
+
+(setq-default fill-column 80)                 ;; 70 columns isn't enough
+
 
 ;; no bars, no gui menus
 (tool-bar-mode   -1)
@@ -901,6 +903,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
             ;; ...other commands here
             ))
     (define-key global-map (kbd "C-c a") 'org-agenda)
+    (define-key global-map (kbd "C-c c") 'org-capture)
 
     ;; highlight code blocks syntax
     (setq org-src-fontify-natively  t
@@ -1239,7 +1242,6 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;; Load theme as the very last activity
 ;; (load-theme 'challenger-deep t)
 (load-theme 'tangotango t)
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
