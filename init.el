@@ -43,6 +43,12 @@
 (unless (package-installed-p 'which-key)
   (package-install 'which-key))
 
+(unless (package-installed-p 'exec-path-from-shell)
+  (package-install 'exec-path-from-shell))
+
+(unless (package-installed-p 'smartparens)
+  (package-install 'smartparens))
+
 (unless (package-installed-p 'rainbow-delimiters)
   (package-install 'rainbow-delimiters))
 
@@ -54,6 +60,12 @@
 
 (unless (package-installed-p 'helm)
   (package-install 'helm))
+
+(unless (package-installed-p 'dash-functional)
+  (package-install 'dash-functional))
+
+(unless (package-installed-p 'markdown-mode)
+  (package-install 'markdown-mode))
 
 (eval-when-compile
   (require 'use-package)
@@ -403,41 +415,44 @@ provide such a commit message."
   ;; https://chris.beams.io/posts/git-commit/.
   (setq git-commit-summary-max-length 50))
 
+(when (memq window-system '(mac ns))
+  (use-package exec-path-from-shell
+    :ensure t
+    :config(exec-path-from-shell-initialize)))
 
-(exec-path-from-shell-initialize)
+(when (window-system)
+  ;; Disables pdf-tools using unicode symbols on the mode line
+  (setq pdf-view-use-unicode-ligther nil)
 
-(setq pdf-view-use-unicode-ligther nil)
+  (use-package pdf-tools
+    :ensure t
+    :config
+    (pdf-tools-install)
+    (setq-default pdf-view-display-size 'fit-width)
+    (bind-keys :map pdf-view-mode-map
+               ("\\" . hydra-pdftools/body)
+               ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
+               ("g"  . pdf-view-first-page)
+               ("G"  . pdf-view-last-page)
+               ("l"  . image-forward-hscroll)
+               ("h"  . image-backward-hscroll)
+               ("j"  . pdf-view-next-page)
+               ("k"  . pdf-view-previous-page)
+               ("e"  . pdf-view-goto-page)
+               ("u"  . pdf-view-revert-buffer)
+               ("al" . pdf-annot-list-annotations)
+               ("ad" . pdf-annot-delete)
+               ("aa" . pdf-annot-attachment-dired)
+               ("am" . pdf-annot-add-markup-annotation)
+               ("at" . pdf-annot-add-text-annotation)
+               ("y"  . pdf-view-kill-ring-save)
+               ("i"  . pdf-misc-display-metadata)
+               ("s"  . pdf-occur)
+               ("b"  . pdf-view-set-slice-from-bounding-box)
+               ("r"  . pdf-view-reset-slice))
+    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
-(use-package pdf-tools
-  :ensure t
-  :config
-  (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-width)
-  (bind-keys :map pdf-view-mode-map
-             ("\\" . hydra-pdftools/body)
-             ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
-             ("g"  . pdf-view-first-page)
-             ("G"  . pdf-view-last-page)
-             ("l"  . image-forward-hscroll)
-             ("h"  . image-backward-hscroll)
-             ("j"  . pdf-view-next-page)
-             ("k"  . pdf-view-previous-page)
-             ("e"  . pdf-view-goto-page)
-             ("u"  . pdf-view-revert-buffer)
-             ("al" . pdf-annot-list-annotations)
-             ("ad" . pdf-annot-delete)
-             ("aa" . pdf-annot-attachment-dired)
-             ("am" . pdf-annot-add-markup-annotation)
-             ("at" . pdf-annot-add-text-annotation)
-             ("y"  . pdf-view-kill-ring-save)
-             ("i"  . pdf-misc-display-metadata)
-             ("s"  . pdf-occur)
-             ("b"  . pdf-view-set-slice-from-bounding-box)
-             ("r"  . pdf-view-reset-slice))
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
-
-(latex-preview-pane-enable)
-
+  (latex-preview-pane-enable))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flycheck
@@ -450,6 +465,7 @@ provide such a commit message."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; haskell
 (use-package haskell-mode
+  :ensure t
   :config
 
   ;; Disable in-buffer underlining of errors and warnings, since we
@@ -497,13 +513,15 @@ provide such a commit message."
 ;; Dash at point
 ;;
 ;; Uses dash to provide detailed documentation look up based on current mode
-(use-package dash-at-point)
-(global-set-key "\C-cd" 'dash-at-point)
-(global-set-key "\C-ce" 'dash-at-point-with-docset)
+(when (memq window-system '(mac ns))
+  (use-package dash-at-point)
+  (global-set-key "\C-cd" 'dash-at-point)
+  (global-set-key "\C-ce" 'dash-at-point-with-docset))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ace-window
 (use-package ace-window
+  :ensure t
   :config
 
   (setq aw-keys '(?a ?s ?d ?f ?j ?k ?l)
@@ -869,6 +887,10 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   :ensure org-plus-contrib
   :config
   (progn
+    ;; Provide advise on screen splitting
+    (defadvice org-agenda (around split-vertically activate)
+      (let ((split-width-threshold 80)) ; or whatever width makes sense for you
+        ad-do-it))
     ;; set the modules enabled by default
     (setq org-modules '(org-bbdb
                         org-bibtex
@@ -903,6 +925,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
             ;; ...other commands here
             ))
     (define-key global-map (kbd "C-c a") 'org-agenda)
+    (define-key global-map (kbd "C-c c") 'nil)
     (define-key global-map (kbd "C-c c") 'org-capture)
 
     ;; highlight code blocks syntax
@@ -1059,7 +1082,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     (setq org-image-actual-width '(800))))
 
 (use-package org-ref
-  :after org)
+  :after org
+  :ensure t)
 (use-package doi-utils
   :after org-ref)
 
@@ -1069,11 +1093,21 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;; enable auto-fill-mode for org
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 ;; org-journal gives C-c C-j to create a new journal entry
-(use-package org-journal)
+(use-package org-journal
+  :ensure t
+  :config
+  (define-key global-map (kbd "C-c j") 'org-journal-new-entry))
 ;; pretty bullets
-(use-package org-bullets)
-;; always pretty bullets
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(use-package org-bullets
+  :ensure t
+  :config
+  ;; always pretty bullets
+  (add-hook 'org-mode-hook
+            (lambda
+              ()
+              (org-bullets-mode 1))))
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1090,6 +1124,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;; No accidental minimize or quit on macOS
 (global-unset-key (kbd "s-m"))
 (global-unset-key (kbd "s-q"))
+(global-unset-key (kbd "s-M-q"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1219,29 +1254,33 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
           ("div" . ?÷)
           ("quot" . ?÷))))
 
-(add-hook 'haskell-mode-hook #'fp-prettify-symbols)
 
 (defun add-pragmatapro-prettify-symbols-alist ()
   "Make sure the letters are pretty when we use Pragmata Pro."
   (dolist (alias pragmatapro-prettify-symbols-alist)
     (push alias prettify-symbols-alist)))
 
-(add-hook 'prog-mode-hook
-          #'add-pragmatapro-prettify-symbols-alist)
 
-(global-prettify-symbols-mode +1)
+(when (display-graphic-p)
+  (add-hook 'haskell-mode-hook #'fp-prettify-symbols)
+  (add-hook 'prog-mode-hook #'add-pragmatapro-prettify-symbols-alist)
+  (global-prettify-symbols-mode +1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Disable smooth scrolling
-(if mac-mouse-wheel-smooth-scroll
-    (setq mac-mouse-wheel-smooth-scroll nil))
+(when (featurep 'ns)
+  (if mac-mouse-wheel-smooth-scroll
+      (setq mac-mouse-wheel-smooth-scroll nil)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load theme as the very last activity
 ;; (load-theme 'challenger-deep t)
 (load-theme 'tangotango t)
+
+(server-start)
+(mac-pseudo-daemon-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1253,7 +1292,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(package-selected-packages
    (quote
-    (benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
