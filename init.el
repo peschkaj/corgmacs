@@ -1,10 +1,28 @@
+;;; -*- lexical-binding: t -*-
+;;;
+;;; init.el - where the corgs begin
 ;;; corgmacs --- Summary
 ;;;
 ;;; Being the emacs configuration of Jeremiah Peschka
-;;;
+
+;; Copyright (C) 2018 Jeremiah Peschka <jeremiah@legit.biz>
+;;
+;;     This program is free software: you can redistribute it and/or modify
+;;     it under the terms of the GNU General Public License as published by
+;;     the Free Software Foundation, either version 3 of the License, or
+;;     (at your option) any later version.
+;;
+;;     This program is distributed in the hope that it will be useful,
+;;     but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;     GNU General Public License for more details.
+;;
+;;     You should have received a copy of the GNU General Public License
+;;     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;;
 ;;; Commentary:
 ;;; Please don't provide any, this is garbage.
-;;;
+
 ;;; Code:
 ;;; Code goes here, moron.
 
@@ -464,6 +482,9 @@ provide such a commit message."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; haskell
+;;
+;; Reminder: We don't need intero because this config is using LSP to provide
+;;           the same functionality
 (use-package haskell-mode
   :ensure t
   :config
@@ -497,16 +518,56 @@ provide such a commit message."
   (setq haskell-completion-backend 'ghci)
   (setq haskell-process-type 'stack-ghci))
 
-(add-to-list 'load-path "~/src/lsp-haskell/")
-(add-to-list 'load-path "~/src/lsp-mode/")
-(add-to-list 'load-path "~/src/lsp-ui/")
+(use-package lsp-mode
+  :ensure t)
 
-(require 'lsp-ui)
-(require 'lsp-haskell)
-(add-hook 'lsp-mode-hook 'lsp-ui-mode)
-(add-hook 'haskell-mode-hook #'lsp-haskell-enable)
-(add-hook 'haskell-mode-hook 'flycheck-mode)
-(setq lsp-haskell-process-path-hie "hie-wrapper")
+(use-package lsp-ui
+  :ensure t
+  :init
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  :config (define-key lsp-ui-mode-map (kbd "C-x C-i") 'lsp-ui-imenu)
+  :bind (:map lsp-ui-mode-map
+	      ("C-c r ." . lsp-ui-peek-find-definitions)
+	      ("C-c r ?" . lsp-ui-peek-find-references)
+	      ("C-c r D" . lsp-ui-peek-find-definitions)
+	      ("C-c r R" . lsp-ui-peek-find-references)
+	      ("C-c r i" . lsp-ui-imenu)
+	      ("C-c r f" . lsp-ui-sideline-apply-code-actions)
+	      ("C-c r r" . lsp-rename)))
+
+(use-package lsp-haskell
+  :ensure t
+  :init
+  (progn
+    (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+    (add-hook 'haskell-mode-hook 'flycheck-mode)
+    (setq lsp-haskell-process-path-hie "hie-wrapper")
+    (define-key haskell-mode-map
+      (kbd "C-c TAB")
+      #'lsp-ui-sideline-apply-code-actions)))
+
+(use-package company-lsp
+  :ensure t
+  :after (company lsp-mode)
+  :config
+  (add-to-list 'company-backends 'company-lsp)
+  :custom
+  (company-lsp-async t)
+  (company-lsp-enable-snippet t))
+
+
+;; (add-to-list 'load-path "~/src/lsp-haskell/")
+;; (add-to-list 'load-path "~/src/lsp-mode/")
+;; (add-to-list 'load-path "~/src/lsp-ui/")
+
+;; (require 'lsp-ui)
+;; (require 'lsp-haskell)
+;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+;; (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+;; (add-hook 'haskell-mode-hook 'flycheck-mode)
+;; (setq lsp-haskell-process-path-hie "hie-wrapper")
+;; (define-key lsp-mode (kbd "C-c <TAB>") #'lsp-ui-sideline-apply-code-actions)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -519,6 +580,12 @@ provide such a commit message."
   (setq projectile-project-search-path '("~/src/peschkaj/"
                                          "~/src/"))
   (projectile-mode +1))
+
+(use-package helm-projectile
+  :ensure t
+  :after helm
+  :config
+  (helm-projectile-on))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1292,6 +1359,12 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;; (load-theme 'challenger-deep t)
 (load-theme 'tangotango t)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; global blackouts
+(blackout 'auto-revert-mode)
+
+
 (server-start)
 (mac-pseudo-daemon-mode)
 
@@ -1300,6 +1373,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-lsp-async t)
+ '(company-lsp-enable-snippet t)
  '(custom-safe-themes
    (quote
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
@@ -1312,3 +1387,4 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+;;; init.el ends here
