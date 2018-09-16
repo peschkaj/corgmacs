@@ -510,6 +510,18 @@ provide such a commit message."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; projectile
+(use-package projectile
+  :ensure t
+  :config
+  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (setq projectile-project-search-path '("~/src/peschkaj/"
+                                         "~/src/"))
+  (projectile-mode +1))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dash at point
 ;;
 ;; Uses dash to provide detailed documentation look up based on current mode
@@ -886,6 +898,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   ;:defer 1
   :ensure org-plus-contrib
   :config
+  (setq split-height-threshold nil)
   (progn
     ;; Provide advise on screen splitting
     (defadvice org-agenda (around split-vertically activate)
