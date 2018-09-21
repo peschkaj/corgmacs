@@ -67,6 +67,9 @@
 (unless (package-installed-p 'smartparens)
   (package-install 'smartparens))
 
+(unless (package-installed-p 'paredit)
+  (package-install 'paredit))
+
 (unless (package-installed-p 'rainbow-delimiters)
   (package-install 'rainbow-delimiters))
 
@@ -115,12 +118,33 @@
   :ensure t)
 (add-hook 'prog-mode-hook
           #'rainbow-delimiters-mode)
+
 ;; smartparens cheatsheet can be found at
 ;; https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
-(require 'smartparens-config)
+(use-package smartparens
+  :ensure t
+  :config
+  (require 'smartparens-config)
+  (add-hook 'tuareg-mode-hook  #'smartparens-strict-mode)
+  (add-hook 'c-mode-hook       #'smartparens-strict-mode)
+  (add-hook 'haskell-mode-hook #'smartparens-strict-mode)
+  (add-hook 'latex-mode-hook   #'smartparens-strict-mode)
+  (add-hook 'rust-mode-hook    #'smartparens-strict-mode)
+  (add-hook 'racket-mode-hook  #'smartparens-strict-mode))
 
-(add-hook 'prog-mode-hook
-          #'smartparens-strict-mode)
+
+
+(use-package paredit
+  :ensure t
+  :blackout
+  :config
+  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook           #'enable-paredit-mode))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -128,8 +152,10 @@
 ;;
 ;; Provides a way to quit or restart emacs, bound to C-x r r
 (use-package restart-emacs
-  :ensure t)
-(define-key global-map (kbd "C-x r r") 'restart-emacs)
+  :ensure t
+  :config
+  (define-key global-map (kbd "C-x r r") 'restart-emacs))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -470,7 +496,8 @@ provide such a commit message."
                ("r"  . pdf-view-reset-slice))
     (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
-  (latex-preview-pane-enable))
+  ;(latex-preview-pane-enable)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flycheck
@@ -807,6 +834,9 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;; replace yes/no questions with y/n
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Delete selected text when typing
+(delete-selection-mode 1)
+
 ;; show the empty lines at the end (bottom) of the buffer
 (toggle-indicate-empty-lines)
 
@@ -816,11 +846,11 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;; the blinking cursor is pretty annoying, so disable it.
 (blink-cursor-mode -1)
 
-;; more thinner window divisions
-;(fringe-mode '(1 . 1))
+;; Move file to trash instead of removing.
+(setq-default delete-by-moving-to-trash t)
 
-;; use ibuffer by default
-(defalias 'list-buffers 'ibuffer)
+;; Revert (update) buffers automatically when underlying files are changed externally.
+(global-auto-revert-mode t)
 
 ;; make sure that UTF-8 is used everywhere.
 (set-terminal-coding-system  'utf-8)
@@ -835,6 +865,11 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (setq-default indent-tabs-mode  nil
               default-tab-width 4
               c-basic-offset    2)
+
+(setq sentence-end-double-space nil  ;; It's the 21st century, sentences can end with only one space.
+      help-window-select t           ;; Immediately select the help window so it can be killed with 'q'
+      )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up some temporary folders
@@ -1025,8 +1060,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ;; Include the latex-exporter
     (use-package ox-latex)
     ;; Add minted to the defaults packages to include when exporting.
-    (add-to-list 'org-latex-packages-alist '("" "minted"))
-    (add-to-list 'org-latex-packages-alist '("" "xunicode"))
+;    (add-to-list 'org-latex-packages-alist '("" "minted"))
+;    (add-to-list 'org-latex-packages-alist '("" "xunicode"))
     ;; Tell the latex export to use the minted package for source
     ;; code coloration.
     (setq org-latex-listings 'minted)
@@ -1163,7 +1198,14 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 (use-package org-ref
   :after org
-  :ensure t)
+  :ensure t
+  :config
+  ;; (setq org-latex-pdf-process
+  ;;     '("pdflatex -interaction nonstopmode -output-directory %o %f"
+  ;;       "bibtex %b"
+  ;;       "pdflatex -interaction nonstopmode -output-directory %o %f"
+  ;;       "pdflatex -interaction nonstopmode -output-directory %o %f"))
+  (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 (use-package doi-utils
   :after org-ref)
 
@@ -1344,14 +1386,27 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (when (display-graphic-p)
   (add-hook 'haskell-mode-hook #'fp-prettify-symbols)
   (add-hook 'prog-mode-hook #'add-pragmatapro-prettify-symbols-alist)
+  (toggle-frame-maximized)
   (global-prettify-symbols-mode +1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Disable smooth scrolling
-(when (featurep 'ns)
+(when (eq system-type 'darwin)
   (if mac-mouse-wheel-smooth-scroll
       (setq mac-mouse-wheel-smooth-scroll nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; keyfreq
+;;
+;; tracks how often commands are used without a shortcut
+;; view usage with keyfreq-show
+(use-package keyfreq
+  :ensure t
+  :blackout t
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1368,6 +1423,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (server-start)
 (mac-pseudo-daemon-mode)
 
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -1380,7 +1437,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(package-selected-packages
    (quote
-    (mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls company company-cabal company-lsp company-prescient restart-emacs helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
