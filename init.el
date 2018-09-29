@@ -29,7 +29,7 @@
 ;; Set up list of package repositories
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
-                         ("melpa-stable" . "http://stable.melpa.org/packages/")
+                         ;("melpa-stable" . "http://stable.melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 
 ;; avoid problems with files newer than their byte-compiled
@@ -87,6 +87,9 @@
 
 (unless (package-installed-p 'markdown-mode)
   (package-install 'markdown-mode))
+
+(unless (package-installed-p 'racket-mode)
+  (package-install 'racket-mode))
 
 (eval-when-compile
   (require 'use-package)
@@ -361,7 +364,9 @@ backends will still be included.")
   ;; Disable VC. This improves performance and disables some annoying
   ;; warning messages and prompts, especially regarding symlinks. See
   ;; https://stackoverflow.com/a/6190338/3538165.
-  (setq vc-handled-backends nil))
+                                        ;(setq vc-handled-backends nil)
+  (remove-hook 'find-file-hook 'vc-find-file-hook)
+  )
 
 ;; Package `magit' provides a full graphical interface for Git within
 ;; Emacs.
@@ -505,6 +510,15 @@ provide such a commit message."
   :ensure t)
 
 (add-hook 'prog-mode-hook #'flycheck-mode)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Racket
+(use-package racket-mode
+  :ensure t
+  :config
+  (add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
+  (add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -835,7 +849,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Delete selected text when typing
-(delete-selection-mode 1)
+;(delete-selection-mode 1)
 
 ;; show the empty lines at the end (bottom) of the buffer
 (toggle-indicate-empty-lines)
@@ -1408,11 +1422,102 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; notmuch configuration
+;; (autoload 'notmuch "notmuch" "notmuch mail" t)
+
+;; (setq mail-user-agent 'message-user-agent
+;;       user-mail-address "jpeschka@pdx.edu"
+;;       user-full-name "Jeremiah Peschka"
+;;       smtpmail-stream-type 'ssl
+;;       smtpmail-smtp-server "smtp.gmail.com"
+;;       smtpmail-smtp-service 465
+;;       smtpmail-debug-info t
+;;       message-send-mail-function 'message-smtpmail-send-it
+;;       message-default-mail-headers "Cc: \nBcc: \n"
+;;       message-auto-save-directory "~/.mail/pdx/draft"
+;;       message-kill-buffer-on-exit t
+;;       message-directory "~/.mail")
+
+;; (defun notmuch-exec-offlineimap ()
+;;     "execute offlineimap"
+;;     (interactive)
+;;     (set-process-sentinel
+;;      (start-process-shell-command "offlineimap"
+;;                                   "*offlineimap*"
+;;                                   "offlineimap -o")
+;;      '(lambda (process event)
+;;         (notmuch-refresh-all-buffers)
+;;         (let ((w (get-buffer-window "*offlineimap*")))
+;;           (when w
+;;             (with-selected-window w (recenter (window-end)))))))
+;; ;    (popwin:display-buffer "*offlineimap*")
+;;     )
+
+;; (add-to-list 'popwin:special-display-config
+;;              '("*offlineimap*" :dedicated t :position bottom :stick t
+;;                :height 0.4 :noselect t))
+
+
+(use-package all-the-icons
+  :ensure t)
+
+(use-package nyan-mode
+  :ensure t
+  :config (nyan-mode))
+
+
+(use-package git-gutter
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook #'git-gutter-mode))
+
+(use-package fancy-battery
+  :ensure t
+  :config (fancy-battery-mode))
+
+(use-package spaceline
+  :ensure t)
+
+(use-package spaceline-config
+  :ensure spaceline
+  :after spaceline)
+
+
+(use-package spaceline-all-the-icons
+  :ensure t
+  :after spaceline
+  :config
+  (spaceline-all-the-icons-theme)
+  (setq spaceline-all-the-icons-separator-type 'none)
+  ;(spaceline-all-the-icons--setup-git-ahead)
+  (spaceline-toggle-all-the-icons-vc-icon-on)
+  (spaceline-toggle-all-the-icons-mode-icon-on)
+  (spaceline-toggle-all-the-icons-vc-status-on)
+  ;(spaceline-toggle-all-the-icons-git-ahead-on)
+  (spaceline-toggle-all-the-icons-git-status-on))
+
+;; (add-to-list 'load-path "~/src/eyeliner")
+;; (use-package eyeliner
+;;   :config
+;;   (require 'eyeliner)
+;;   (eyeliner/install )
+;;   (eyeliner/style 'default "white")
+;;   (eyeliner/style 'plain-color "yellow")
+;;   (eyeliner/segment my/buffer-name-segment
+;;     (let* ((buffer-state (format-mode-line "%*")))
+;;       (propertize (buffer-name)
+;;                   'face (if (string= buffer-state "-")
+;;                             '(:foreground "white")
+;;                           '(:foreground "orange")))))
+  
+;;   )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load theme as the very last activity
-;; (load-theme 'challenger-deep t)
 (load-theme 'tangotango t)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1437,7 +1542,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(package-selected-packages
    (quote
-    (tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
