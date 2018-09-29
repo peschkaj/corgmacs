@@ -1490,28 +1490,16 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   :config
   (spaceline-all-the-icons-theme)
   (setq spaceline-all-the-icons-separator-type 'none)
-  ;(spaceline-all-the-icons--setup-git-ahead)
+  (setq spaceline-all-the-icons-icon-set-modified 'circle)
+
   (spaceline-toggle-all-the-icons-vc-icon-on)
   (spaceline-toggle-all-the-icons-mode-icon-on)
   (spaceline-toggle-all-the-icons-vc-status-on)
-  ;(spaceline-toggle-all-the-icons-git-ahead-on)
+  ;; git-ahead is currently disabled because it starts spamming messages that
+  ;; 'Buffer " *temp*" has a running processes' but nobody actually cares.
+  ;; (spaceline-all-the-icons--setup-git-ahead)
+  ;; (spaceline-toggle-all-the-icons-git-ahead-on)
   (spaceline-toggle-all-the-icons-git-status-on))
-
-;; (add-to-list 'load-path "~/src/eyeliner")
-;; (use-package eyeliner
-;;   :config
-;;   (require 'eyeliner)
-;;   (eyeliner/install )
-;;   (eyeliner/style 'default "white")
-;;   (eyeliner/style 'plain-color "yellow")
-;;   (eyeliner/segment my/buffer-name-segment
-;;     (let* ((buffer-state (format-mode-line "%*")))
-;;       (propertize (buffer-name)
-;;                   'face (if (string= buffer-state "-")
-;;                             '(:foreground "white")
-;;                           '(:foreground "orange")))))
-  
-;;   )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
