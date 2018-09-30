@@ -1458,14 +1458,14 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;;              '("*offlineimap*" :dedicated t :position bottom :stick t
 ;;                :height 0.4 :noselect t))
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; configuration for spaceline + spaceline-all-the-icons
 (use-package all-the-icons
   :ensure t)
 
 (use-package nyan-mode
   :ensure t
   :config (nyan-mode))
-
 
 (use-package git-gutter
   :ensure t
@@ -1481,14 +1481,15 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 (use-package spaceline-config
   :ensure spaceline
-  :after spaceline)
-
+  :after spaceline
+  :config
+  (setq powerline-default-separator 'bar))
 
 (use-package spaceline-all-the-icons
   :ensure t
   :after spaceline
   :config
-  (spaceline-all-the-icons-theme)
+
   (setq spaceline-all-the-icons-separator-type 'none)
   (setq spaceline-all-the-icons-icon-set-modified 'circle)
 
@@ -1499,7 +1500,67 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   ;; 'Buffer " *temp*" has a running processes' but nobody actually cares.
   ;; (spaceline-all-the-icons--setup-git-ahead)
   ;; (spaceline-toggle-all-the-icons-git-ahead-on)
-  (spaceline-toggle-all-the-icons-git-status-on))
+  (spaceline-toggle-all-the-icons-git-status-on)
+  (spaceline-all-the-icons-theme))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; treemacs
+(use-package treemacs
+  :ensure t
+  :config
+  (progn
+    (setq treemacs-collapse-dirs              (if (executable-find "python") 3 0)
+          treemacs-deferred-git-apply-delay   0.5
+          treemacs-display-in-side-window     t
+          treemacs-file-event-delay           5000
+          treemacs-file-follow-delay          0.2
+          treemacs-follow-after-init          t
+          treemacs-follow-recenter-distance   0.1
+          treemacs-goto-tag-strategy          'refetch-index
+          treemacs-indentation                2
+          treemacs-indentation-string         " "
+          treemacs-is-never-other-window      nil
+          treemacs-no-png-images              nil
+          treemacs-project-follow-cleanup     nil
+          treemacs-persist-file               (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-recenter-after-file-follow nil
+          treemacs-recenter-after-tag-follow  nil
+          treemacs-show-hidden-files          t
+          treemacs-silent-filewatch           nil
+          treemacs-silent-refresh             nil
+          treemacs-sorting                    'alphabetic-desc
+          treemacs-space-between-root-nodes   t
+          treemacs-tag-follow-cleanup         t
+          treemacs-tag-follow-delay           1.5
+          treemacs-width                      35)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode t)
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null (executable-find "python3"))))
+      (`(t . t)
+       (treemacs-git-mode 'extended))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1530,7 +1591,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(package-selected-packages
    (quote
-    (paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
