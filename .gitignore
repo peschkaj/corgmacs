@@ -54,3 +54,5 @@ auto-save-list/
 elpa/
 tmp/
 var/
+
+.cache/
