@@ -1496,6 +1496,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   (spaceline-toggle-all-the-icons-vc-icon-on)
   (spaceline-toggle-all-the-icons-mode-icon-on)
   (spaceline-toggle-all-the-icons-vc-status-on)
+  (spaceline-toggle-all-the-icons-text-scale-on)
   ;; git-ahead is currently disabled because it starts spamming messages that
   ;; 'Buffer " *temp*" has a running processes' but nobody actually cares.
   ;; (spaceline-all-the-icons--setup-git-ahead)
