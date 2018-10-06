@@ -105,8 +105,9 @@
 ;; which-key allows the lazy emacs user to start typing a key combination,
 ;; pause, and then see what's actually possible
 (use-package which-key
-  :blackout t)
-(which-key-mode)
+  :blackout t
+  :ensure t
+  :config (which-key-mode))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -116,11 +117,18 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ediff config
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pretty parens and curly bois
 (use-package rainbow-delimiters
-  :ensure t)
-(add-hook 'prog-mode-hook
-          #'rainbow-delimiters-mode)
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook
+            #'rainbow-delimiters-mode))
+
 
 ;; smartparens cheatsheet can be found at
 ;; https://gist.github.com/pvik/8eb5755cc34da0226e3fc23a320a3c95
@@ -134,7 +142,6 @@
   (add-hook 'latex-mode-hook   #'smartparens-strict-mode)
   (add-hook 'rust-mode-hook    #'smartparens-strict-mode)
   (add-hook 'racket-mode-hook  #'smartparens-strict-mode))
-
 
 
 (use-package paredit
@@ -364,9 +371,7 @@ backends will still be included.")
   ;; Disable VC. This improves performance and disables some annoying
   ;; warning messages and prompts, especially regarding symlinks. See
   ;; https://stackoverflow.com/a/6190338/3538165.
-                                        ;(setq vc-handled-backends nil)
-  (remove-hook 'find-file-hook 'vc-find-file-hook)
-  )
+  (remove-hook 'find-file-hook 'vc-find-file-hook))
 
 ;; Package `magit' provides a full graphical interface for Git within
 ;; Emacs.
@@ -499,10 +504,7 @@ provide such a commit message."
                ("s"  . pdf-occur)
                ("b"  . pdf-view-set-slice-from-bounding-box)
                ("r"  . pdf-view-reset-slice))
-    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
-
-  ;(latex-preview-pane-enable)
-  )
+    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flycheck
@@ -1014,7 +1016,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   ;:defer 1
   :ensure org-plus-contrib
   :config
-  (setq split-height-threshold nil)
+  (setq split-height-threshold nil
+        org-export-with-smart-quotes t)
   (progn
     ;; Provide advise on screen splitting
     (defadvice org-agenda (around split-vertically activate)
@@ -1403,6 +1406,13 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   (toggle-frame-maximized)
   (global-prettify-symbols-mode +1))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; markdown
+(use-package markdown-mode
+  :ensure t
+  :config (autoload 'gfm-mode "markdown-mode"
+   "Major mode for editing GitHub Flavored Markdown files" t))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Disable smooth scrolling
@@ -1590,9 +1600,12 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
  '(custom-safe-themes
    (quote
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
+ '(org-agenda-files
+   (quote
+    ("~/Documents/org/nsf-research-statement.org" "/Users/jeremiah/Documents/org/agenda.org" "/Users/jeremiah/Documents/org/inbox.org" "/Users/jeremiah/Documents/org/index.org" "/Users/jeremiah/Documents/org/geu.org" "/Users/jeremiah/Documents/org/333.org" "/Users/jeremiah/Documents/org/calsync/jeremiahpeschka-cal.org" "/Users/jeremiah/Documents/org/calsync/legitbiz-cal.org" "/Users/jeremiah/Documents/org/calsync/jpeschka-cal.org")))
  '(package-selected-packages
    (quote
-    (treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave latex-preview-pane smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
