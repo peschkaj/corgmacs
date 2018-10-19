@@ -137,7 +137,7 @@
   :config
   (require 'smartparens-config)
   (add-hook 'tuareg-mode-hook  #'smartparens-strict-mode)
-  (add-hook 'c-mode-hook       #'smartparens-strict-mode)
+;  (add-hook 'c-mode-hook       #'smartparens-strict-mode)
   (add-hook 'haskell-mode-hook #'smartparens-strict-mode)
   (add-hook 'latex-mode-hook   #'smartparens-strict-mode)
   (add-hook 'rust-mode-hook    #'smartparens-strict-mode)
@@ -599,19 +599,6 @@ provide such a commit message."
   (company-lsp-enable-snippet t))
 
 
-;; (add-to-list 'load-path "~/src/lsp-haskell/")
-;; (add-to-list 'load-path "~/src/lsp-mode/")
-;; (add-to-list 'load-path "~/src/lsp-ui/")
-
-;; (require 'lsp-ui)
-;; (require 'lsp-haskell)
-;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-;; (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
-;; (add-hook 'haskell-mode-hook 'flycheck-mode)
-;; (setq lsp-haskell-process-path-hie "hie-wrapper")
-;; (define-key lsp-mode (kbd "C-c <TAB>") #'lsp-ui-sideline-apply-code-actions)
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; projectile
@@ -622,7 +609,8 @@ provide such a commit message."
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (setq projectile-project-search-path '("~/src/peschkaj/"
                                          "~/src/"))
-  (projectile-mode +1))
+  (projectile-global-mode))
+
 
 (use-package helm-projectile
   :ensure t
@@ -1019,6 +1007,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   (setq split-height-threshold nil
         org-export-with-smart-quotes t)
   (progn
+    ;; save org
+    (advice-add 'org-refile :after 'org-save-all-org-buffers)
     ;; Provide advise on screen splitting
     (defadvice org-agenda (around split-vertically activate)
       (let ((split-width-threshold 80)) ; or whatever width makes sense for you
@@ -1274,8 +1264,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;;
 ;; Mon Jun 19 17:43:56 PDT 2017
 ;; I'm not sure but this _might_ be causing problems for my local TRAMP mode
-(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
-(setq tramp-shell-prompt-pattern "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
+;(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+;(setq tramp-shell-prompt-pattern "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1517,6 +1507,17 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; multi-term
+(use-package multi-term
+  :ensure t
+  :config
+  (add-hook 'term-mode-hook (lambda ()
+                              (define-key term-raw-map (kbd "C-y") 'term-paste)))
+  (setq multi-term-program "/usr/local/bin/zsh"))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; treemacs
 (use-package treemacs
   :ensure t
@@ -1591,7 +1592,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
+ ;; custom-set-variab¯les was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
@@ -1605,7 +1606,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("~/Documents/org/nsf-research-statement.org" "/Users/jeremiah/Documents/org/agenda.org" "/Users/jeremiah/Documents/org/inbox.org" "/Users/jeremiah/Documents/org/index.org" "/Users/jeremiah/Documents/org/geu.org" "/Users/jeremiah/Documents/org/333.org" "/Users/jeremiah/Documents/org/calsync/jeremiahpeschka-cal.org" "/Users/jeremiah/Documents/org/calsync/legitbiz-cal.org" "/Users/jeremiah/Documents/org/calsync/jpeschka-cal.org")))
  '(package-selected-packages
    (quote
-    (treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
