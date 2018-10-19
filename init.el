@@ -353,6 +353,7 @@ backends will still be included.")
 ;; Package `company-prescient' provides intelligent sorting and
 ;; filtering for candidates in Company completions.
 (use-package company-prescient
+  :ensure t
   :demand t
   :after company
   :config
@@ -832,8 +833,10 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 ;; no bars, no gui menus
-(tool-bar-mode   -1)
-(scroll-bar-mode -1)
+(if (display-graphic-p)
+    (progn
+     (tool-bar-mode   -1)
+     (scroll-bar-mode -1)))
 
 ;; replace yes/no questions with y/n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -1587,7 +1590,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 (server-start)
-(mac-pseudo-daemon-mode)
+(if (string-equal system-type "darwin")
+    (mac-pseudo-daemon-mode))
 
 
 
