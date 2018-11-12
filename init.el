@@ -207,8 +207,11 @@
   (global-set-key (kbd "<f5> s")                       'helm-find)
   (global-set-key (kbd "S-<f2>")                       'helm-execute-kmacro)
   (global-set-key (kbd "C-c i")                        'helm-imenu-in-all-buffers)
-  ;(global-set-key (kbd "<f11> o")                      'helm-org-agenda-files-headings)
-  (global-set-key (kbd "C-s")                          'helm-occur)
+  (global-unset-key (kbd "C-s"))                       ; unset C-s for isearch, rebind to C-s s
+  (global-set-key (kbd "C-s s")                        'isearch-forward)
+  (global-set-key (kbd "C-s C-s")                      'helm-occur)
+  (global-set-key (kbd "C-s o")                        'helm-occur-from-isearch)
+  ;; (global-set-key (kbd "<f11> o")                      'helm-org-agenda-files-headings)
   ;; (progn (define-key prog-mode-map (kbd "C-s") 'helm-occur)
   ;;        (define-key text-mode-map (kbd "C-s") 'helm-occur))
   (define-key global-map [remap jump-to-register]      'helm-register)
@@ -1240,6 +1243,12 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
               (org-bullets-mode 1))))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Join lines fromthe top instead of from the bottom
+(defun top-join-line ()
+  "Join the current line with the line beneath it."
+  (interactive)
+  (delete-indentation 1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1257,6 +1266,9 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (global-unset-key (kbd "s-m"))
 (global-unset-key (kbd "s-q"))
 (global-unset-key (kbd "s-M-q"))
+
+(define-key global-map (kbd "C-^") 'top-join-line)
+(define-key global-map (kbd "C-x j") 'delete-indentation)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
