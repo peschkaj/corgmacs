@@ -980,6 +980,73 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; C/C++ configuration
+
+;; uses Allman style by default
+(setq c-default-style "bsd")
+
+;; nobody likes tabs
+(setq-default indent-tabs-mode nil)
+;; and tabs should only be 2 characters
+(setq-default tab-width 2)
+
+;; show unncessary whitespace that can mess up your diff
+(add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
+
+;; Some better smartparens behavior:
+;; when you press RET, the curly braces automatically
+;; add another newline
+(sp-with-modes '(c-mode c++-mode)
+  (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
+  (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
+                                            ("* ||\n[i]" "RET"))))
+
+;; By default, Emacs won't indent when press RET because the command bound to
+;; RET is newline. You can enable automatic indentation by binding RET to
+;; newline-and-indent.
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+(setq helm-gtags-ignore-case t
+      helm-gtags-auto-update t
+      helm-gtags-use-input-at-cursor t
+      helm-gtags-pulse-at-cursor t
+      helm-gtags-prefix-key "\C-cg"
+      helm-gtags-suggested-key-mapping t)
+
+(use-package helm-gtags
+  :ensure t
+  :config
+  (add-hook 'dired-mode-hook 'helm-gtags-mode)
+  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+  (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+  (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+  (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+  (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+  (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+  (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
+
+(require 'cc-mode)
+(require 'semantic)
+
+(global-semanticdb-minor-mode 1)
+(global-semantic-idle-scheduler-mode 1)
+(global-semantic-idle-summary-mode 1)
+
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+
+(use-package stickyfunc-enhance
+  :ensure t)
+
+(semantic-mode 1)
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up base folders for documents and PDFs and such...
 (defvar jp/docs (expand-file-name "~/Documents/") "Documents folder.")
 (defvar jp/papers-base (concat jp/docs "reading/") "Location for reading library including PDFs, bibliography, and notes.")
@@ -1608,7 +1675,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 (custom-set-variables
- ;; custom-set-variab¯les was added by Custom.
+ ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
@@ -1622,7 +1689,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("~/Documents/org/nsf-research-statement.org" "/Users/jeremiah/Documents/org/agenda.org" "/Users/jeremiah/Documents/org/inbox.org" "/Users/jeremiah/Documents/org/index.org" "/Users/jeremiah/Documents/org/geu.org" "/Users/jeremiah/Documents/org/333.org" "/Users/jeremiah/Documents/org/calsync/jeremiahpeschka-cal.org" "/Users/jeremiah/Documents/org/calsync/legitbiz-cal.org" "/Users/jeremiah/Documents/org/calsync/jpeschka-cal.org")))
  '(package-selected-packages
    (quote
-    (git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (stickyfunc-enhance company-c-headers helm-gtags ggtags git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
