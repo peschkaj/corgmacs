@@ -136,12 +136,12 @@
   :ensure t
   :config
   (require 'smartparens-config)
-  (add-hook 'tuareg-mode-hook  #'smartparens-strict-mode)
-;  (add-hook 'c-mode-hook       #'smartparens-strict-mode)
-  (add-hook 'haskell-mode-hook #'smartparens-strict-mode)
-  (add-hook 'latex-mode-hook   #'smartparens-strict-mode)
-  (add-hook 'rust-mode-hook    #'smartparens-strict-mode)
-  (add-hook 'racket-mode-hook  #'smartparens-strict-mode))
+  (add-hook 'tuareg-mode-hook  #'smartparens-mode)
+  (add-hook 'c-mode-hook       #'smartparens-mode)
+  (add-hook 'haskell-mode-hook #'smartparens-mode)
+  (add-hook 'latex-mode-hook   #'smartparens-mode)
+  (add-hook 'rust-mode-hook    #'smartparens-mode)
+  (add-hook 'racket-mode-hook  #'smartparens-mode))
 
 
 (use-package paredit
@@ -165,6 +165,18 @@
   :ensure t
   :config
   (define-key global-map (kbd "C-x r r") 'restart-emacs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; undo tree
+;;
+;; Rebind the undo and redo commands to undo tree
+(use-package undo-tree
+  :ensure t
+  :config
+  (global-undo-tree-mode 1)
+  (global-unset-key (kbd "C-/"))
+  (global-set-key (kbd "C-/") 'undo)
+  (global-set-key (kbd "C-?") 'undo-tree-redo))
 
 
 
@@ -1204,7 +1216,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
           appt-display-mode-line nil      ;; don't show in the modeline
           appt-display-format 'window)    ;; passes notifications to the designated window function-key-map
     (appt-activate 1)                     ;; activate appointment notification
-    (display-time)                        ;; activate time display
+    ;(display-time)                        ;; activate time display
 
     (org-agenda-to-appt)                  ;; generate the appt list from org agenda files on emacs launch
     (run-at-time "24:01" 3600 'org-agenda-to-appt)           ;; update appt list hourly
@@ -1579,10 +1591,13 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   (spaceline-toggle-all-the-icons-mode-icon-on)
   (spaceline-toggle-all-the-icons-vc-status-on)
   (spaceline-toggle-all-the-icons-text-scale-on)
+  ;; p sure that the time is leading to more power draw
+  (spaceline-toggle-all-the-icons-time-off)
   ;; git-ahead is currently disabled because it starts spamming messages that
   ;; 'Buffer " *temp*" has a running processes' but nobody actually cares.
   ;; (spaceline-all-the-icons--setup-git-ahead)
   ;; (spaceline-toggle-all-the-icons-git-ahead-on)
+
   (spaceline-toggle-all-the-icons-git-status-on)
   (spaceline-all-the-icons-theme))
 
@@ -1669,8 +1684,16 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 (server-start)
-(if (string-equal system-type "darwin")
-    (mac-pseudo-daemon-mode))
+(when (string-equal system-type "darwin")
+  (mac-pseudo-daemon-mode)
+  ;; (defun jp/save-buffers-kill-emacs ()
+  ;;   (interactive)
+  ;;   (if (not (eq mac-pseudo-daemon-mode 'nil))
+  ;;       (mac-pseudo-daemon-mode))
+  ;;   (save-buffers-kill-emacs))
+  ;; (global-unset-key (kbd "C-x C-c"))
+  ;; (global-set-key (kbd "C-x C-c") 'jp/save-buffers-kill-emacs)
+  )
 
 
 
@@ -1689,7 +1712,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("~/Documents/org/nsf-research-statement.org" "/Users/jeremiah/Documents/org/agenda.org" "/Users/jeremiah/Documents/org/inbox.org" "/Users/jeremiah/Documents/org/index.org" "/Users/jeremiah/Documents/org/geu.org" "/Users/jeremiah/Documents/org/333.org" "/Users/jeremiah/Documents/org/calsync/jeremiahpeschka-cal.org" "/Users/jeremiah/Documents/org/calsync/legitbiz-cal.org" "/Users/jeremiah/Documents/org/calsync/jpeschka-cal.org")))
  '(package-selected-packages
    (quote
-    (stickyfunc-enhance company-c-headers helm-gtags ggtags git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (undo-tree stickyfunc-enhance company-c-headers helm-gtags ggtags git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
