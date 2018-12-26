@@ -95,6 +95,25 @@
   (require 'use-package)
   (require 'ibuffer))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tramp settings
+;;
+;; ZSH on the PDX servers caused problems with tramp hanging.
+;; Force to bash instead to make life simple.
+;;
+;; Mon Jun 19 17:43:56 PDT 2017
+;; I'm not sure but this _might_ be causing problems for my local TRAMP mode
+;;
+;; Wed Dec 26 07:45:35 PDT 2018
+;; tramp hangs are fixed by adding the following AT THE VERY END of .zshrc
+;; (or .zshrc.local)
+;; [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
+(use-package tramp
+  :init (setq tramp-ssh-controlmaster-options
+                                        ;"-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=0"
+              nil
+              ))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Blackout - control the mode line
@@ -578,9 +597,11 @@ provide such a commit message."
   (setq haskell-process-type 'stack-ghci))
 
 (use-package lsp-mode
+  :commands lsp
   :ensure t)
 
 (use-package lsp-ui
+  :commands lsp-ui-mode
   :ensure t
   :init
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
@@ -598,7 +619,7 @@ provide such a commit message."
   :ensure t
   :init
   (progn
-    (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+    (add-hook 'haskell-mode-hook #'lsp)
     (add-hook 'haskell-mode-hook 'flycheck-mode)
     (setq lsp-haskell-process-path-hie "hie-wrapper")
     (define-key haskell-mode-map
@@ -606,6 +627,7 @@ provide such a commit message."
       #'lsp-ui-sideline-apply-code-actions)))
 
 (use-package company-lsp
+  :commands company-lsp
   :ensure t
   :after (company lsp-mode)
   :config
@@ -994,8 +1016,23 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C/C++ configuration
 
+(use-package google-c-style
+  :ensure t
+  :config
+  (add-hook 'c-common-hook 'google-set-c-style))
+
+;; Set up clang-format
+(use-package clang-format
+  :ensure t
+  :config
+  (global-set-key (kbd "C-c i") 'clang-format-region)
+  (global-set-key (kbd "C-c u") 'clang-format-buffer)
+  (setq clang-format-style-option "file"
+        c-c++-enable-clang-support t))
+
 ;; uses Allman style by default
-(setq c-default-style "bsd")
+(setq c-default-style "bsd"
+      c-basic-offset 2)
 
 ;; nobody likes tabs
 (setq-default indent-tabs-mode nil)
@@ -1350,16 +1387,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (define-key global-map (kbd "C-x j") 'delete-indentation)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; tramp settings
-;;
-;; ZSH on the PDX servers caused problems with tramp hanging.
-;; Force to bash instead to make life simple.
-;;
-;; Mon Jun 19 17:43:56 PDT 2017
-;; I'm not sure but this _might_ be causing problems for my local TRAMP mode
-;(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
-;(setq tramp-shell-prompt-pattern "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1457,25 +1486,26 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
         '(
           ("\\" . ?λ)
           ("*" . ?⋅)
-          ("forall" . ?∀)
-          ("forAll" . ?∀)
-          ("all"    . ?∀)
-          ("exists" . ?∃)
-          ("undefined" . ?⊥)
-          ("elem" . ?∈)
-          ("flip elem" . ?∋)
-          ("notElem" . ?∉)
-          ("flip notElem" . ?∌)
-          ("member" . ?∈)
-          ("notMember" . ?∉)
-          ("union" . ?⋃)
-          ("intersection" . ?⋂)
-          ("isSubsetOf" . ?⊆)
-          ("isProperSubsetOf" . ?⊂)
+          ;; ("forall" . ?∀)
+          ;; ("forAll" . ?∀)
+          ;; ("all"    . ?∀)
+          ;; ("exists" . ?∃)
+          ;; ("undefined" . ?⊥)
+          ;; ("elem" . ?∈)
+          ;; ("flip elem" . ?∋)
+          ;; ("notElem" . ?∉)
+          ;; ("flip notElem" . ?∌)
+          ;; ("member" . ?∈)
+          ;; ("notMember" . ?∉)
+          ;; ("union" . ?⋃)
+          ;; ("intersection" . ?⋂)
+          ;; ("isSubsetOf" . ?⊆)
+          ;; ("isProperSubsetOf" . ?⊂)
           (" . " . (? (Br . Bl) ?◦ (Br . Bl) ? ))
-          ("/" . ?÷)
-          ("div" . ?÷)
-          ("quot" . ?÷))))
+          ;; ("/" . ?÷)
+          ;; ("div" . ?÷)
+          ;; ("quot" . ?÷)
+          )))
 
 
 (defun add-pragmatapro-prettify-symbols-alist ()
