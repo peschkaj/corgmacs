@@ -157,6 +157,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pretty parens and curly bois
+;;
+;; Highlight the matching buddy to the current paren/bracket/curly boi
+(show-paren-mode t)
+(setq show-paren-style 'parenthesis)
+
+;; set up rainbow delimiters
 (use-package rainbow-delimiters
   :ensure t
   :config
