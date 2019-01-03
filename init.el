@@ -5,7 +5,7 @@
 ;;;
 ;;; Being the emacs configuration of Jeremiah Peschka
 
-;; Copyright (C) 2018 Jeremiah Peschka <jeremiah@legit.biz>
+;; Copyright (C) 2019 Jeremiah Peschka <jeremiah@legit.biz>
 ;;
 ;;     This program is free software: you can redistribute it and/or modify
 ;;     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 ;; Set up list of package repositories
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
-                         ;("melpa-stable" . "http://stable.melpa.org/packages/")
+                         ("melpa-stable" . "http://stable.melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 
 ;; avoid problems with files newer than their byte-compiled
@@ -96,6 +96,21 @@
   (require 'ibuffer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set up loading from modules directory
+;;
+;; This code is borrowed from Bodil Stokke's excell ohai-emacs
+;; see https://github.com/bodil/ohai-emacs for the original.
+;;
+;; Figure out the path to our .emacs.d by getting the path part of the
+;; current file (`init.el`).
+(setq dotfiles-dir (file-name-directory
+                    (or (buffer-file-name) (file-chase-links load-file-name))))
+
+;; Individual modules are stored in a `modules` subdirectory of .emacs.d; it's
+;; necessary to add these modules explicitly to the load-path.
+(add-to-list 'load-path (concat dotfiles-dir "modules"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tramp settings
 ;;
 ;; ZSH on the PDX servers caused problems with tramp hanging.
@@ -157,7 +172,6 @@
   (require 'smartparens-config)
   (add-hook 'tuareg-mode-hook  #'smartparens-mode)
   (add-hook 'c-mode-hook       #'smartparens-mode)
-  (add-hook 'haskell-mode-hook #'smartparens-mode)
   (add-hook 'latex-mode-hook   #'smartparens-mode)
   (add-hook 'rust-mode-hook    #'smartparens-mode)
   (add-hook 'racket-mode-hook  #'smartparens-mode))
@@ -550,6 +564,12 @@ provide such a commit message."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Flymake
+;; Don't put flymake copies of files in the working folder.
+(setq flymake-run-in-place nil)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Racket
 (use-package racket-mode
   :ensure t
@@ -560,82 +580,7 @@ provide such a commit message."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; haskell
-;;
-;; Reminder: We don't need intero because this config is using LSP to provide
-;;           the same functionality
-(use-package haskell-mode
-  :ensure t
-  :config
-
-  ;; Disable in-buffer underlining of errors and warnings, since we
-  ;; already have them from Flycheck.
-  (setq haskell-process-show-overlays nil)
-
-  ;; Enable REPL integration.
-  (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
-
-  ;; Work around upstream bug, see
-  ;; https://github.com/haskell/haskell-mode/issues/1553.
-
-  (setq haskell-process-args-ghci
-        '("-ferror-spans" "-fshow-loaded-modules"))
-
-  (setq haskell-process-args-cabal-repl
-        '("--ghc-options=-ferror-spans -fshow-loaded-modules"))
-
-  (setq haskell-process-args-stack-ghci
-        '("--ghci-options=-ferror-spans -fshow-loaded-modules"
-          "--no-build" "--no-load"))
-
-  (setq haskell-process-args-cabal-new-repl
-        '("--ghc-options=-ferror-spans -fshow-loaded-modules"))
-
-  ;; Allow `haskell-mode' to use Stack with the global project instead
-  ;; of trying to invoke GHC directly, if not inside any sort of
-  ;; project.
-  (setq haskell-completion-backend 'ghci)
-  (setq haskell-process-type 'stack-ghci))
-
-(use-package lsp-mode
-  :commands lsp
-  :ensure t)
-
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :ensure t
-  :init
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-  :config (define-key lsp-ui-mode-map (kbd "C-x C-i") 'lsp-ui-imenu)
-  :bind (:map lsp-ui-mode-map
-	      ("C-c r ." . lsp-ui-peek-find-definitions)
-	      ("C-c r ?" . lsp-ui-peek-find-references)
-	      ("C-c r D" . lsp-ui-peek-find-definitions)
-	      ("C-c r R" . lsp-ui-peek-find-references)
-	      ("C-c r i" . lsp-ui-imenu)
-	      ("C-c r f" . lsp-ui-sideline-apply-code-actions)
-	      ("C-c r r" . lsp-rename)))
-
-(use-package lsp-haskell
-  :ensure t
-  :init
-  (progn
-    (add-hook 'haskell-mode-hook #'lsp)
-    (add-hook 'haskell-mode-hook 'flycheck-mode)
-    (setq lsp-haskell-process-path-hie "hie-wrapper")
-    (define-key haskell-mode-map
-      (kbd "C-c TAB")
-      #'lsp-ui-sideline-apply-code-actions)))
-
-(use-package company-lsp
-  :commands company-lsp
-  :ensure t
-  :after (company lsp-mode)
-  :config
-  (add-to-list 'company-backends 'company-lsp)
-  :custom
-  (company-lsp-async t)
-  (company-lsp-enable-snippet t))
-
+(require 'corgmacs-haskell)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1600,8 +1545,12 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   :ensure t
   :config (fancy-battery-mode))
 
+;; Both spaceline and spaceline-all-the-icons are pinned to melpa-stable
+;; this is because of this bug https://github.com/domtronn/spaceline-all-the-icons.el/issues/100
+;; and the fix was found via https://github.com/flamingbear/emacs-config/commit/6594677de383d742acaccc293a260b9adff7e4cc
 (use-package spaceline
-  :ensure t)
+  :ensure t
+  :pin melpa-stable)
 
 (use-package spaceline-config
   :ensure spaceline
@@ -1612,6 +1561,7 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (use-package spaceline-all-the-icons
   :ensure t
   :after spaceline
+  :pin melpa-stable
   :config
 
   (setq spaceline-all-the-icons-separator-type 'none)
@@ -1732,8 +1682,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-lsp-async t)
- '(company-lsp-enable-snippet t)
+ '(company-lsp-async t t)
+ '(company-lsp-enable-snippet t t)
  '(custom-safe-themes
    (quote
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
@@ -1742,7 +1692,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("~/Documents/org/nsf-research-statement.org" "/Users/jeremiah/Documents/org/agenda.org" "/Users/jeremiah/Documents/org/inbox.org" "/Users/jeremiah/Documents/org/index.org" "/Users/jeremiah/Documents/org/geu.org" "/Users/jeremiah/Documents/org/333.org" "/Users/jeremiah/Documents/org/calsync/jeremiahpeschka-cal.org" "/Users/jeremiah/Documents/org/calsync/legitbiz-cal.org" "/Users/jeremiah/Documents/org/calsync/jpeschka-cal.org")))
  '(package-selected-packages
    (quote
-    (undo-tree stickyfunc-enhance company-c-headers helm-gtags ggtags git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra))))
+    (hlint-refactor hindent helm-hoogle company-ghci intero undo-tree stickyfunc-enhance company-c-headers helm-gtags ggtags git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra)))
+ '(tab-width 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
