@@ -1139,6 +1139,21 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ;; highlight code blocks syntax in PDF export
     ;; Include the latex-exporter
     (use-package ox-latex)
+    (add-to-list 'org-latex-classes
+             '("koma-article"
+               "\\documentclass{scrartcl}
+                \\usepackage{microtype}
+                \\usepackage{tgtermes}
+                \\usepackage[scale=.9]{tgheros}
+                \\usepackage{tgcursor}
+                \\usepackage{paralist}
+                \\newcommand{\\rc}{$^{14}C$}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
     ;; Add minted to the defaults packages to include when exporting.
 ;    (add-to-list 'org-latex-packages-alist '("" "minted"))
 ;    (add-to-list 'org-latex-packages-alist '("" "xunicode"))
@@ -1354,7 +1369,9 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; macOS: Raise emacs on activation
+;; macOS:
+;;
+;; Raise emacs on activation
 (when (featurep 'ns)
   (defun ns-raise-emacs ()
     "Raise Emacs."
@@ -1370,6 +1387,9 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 
   (when (display-graphic-p)
     (ns-raise-emacs)))
+
+;; Set right command to super
+(setq mac-right-command-modifier 'super)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
