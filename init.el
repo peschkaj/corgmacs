@@ -856,10 +856,11 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (prefer-coding-system        'utf-8)
 (set-input-method nil)
 
- ;; always indent with spaces
+;; always indent with spaces... except Makefiles
 (setq-default indent-tabs-mode  nil
-              default-tab-width 4
+              default-tab-width 2
               c-basic-offset    2)
+(add-hook 'makefile-bsd-mode-hook '(setq indent-tabs-mode t))
 
 (setq sentence-end-double-space nil  ;; It's the 21st century, sentences can end with only one space.
       help-window-select t           ;; Immediately select the help window so it can be killed with 'q'
@@ -1678,6 +1679,21 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
   :ensure t)
 
 
+(use-package langtool
+  :ensure t
+  :config
+  (progn (setq langtool-language-tool-server-jar "/usr/local/Cellar/languagetool/4.4/libexec/languagetool.jar"
+               langtool-server-user-arguments '("-p" "8082")
+               langtool-bin "/usr/local/bin/languagetool")
+         ;; TODO move these to :bind
+         (global-set-key "\C-x4w" 'langtool-check)
+         (global-set-key "\C-x4W" 'langtool-check-done)
+         (global-set-key "\C-x4l" 'langtool-switch-default-language)
+         (global-set-key "\C-x44" 'langtool-show-message-at-point)
+         (global-set-key "\C-x4c" 'langtool-correct-buffer)
+         )
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load theme as the very last activity
 (load-theme 'tangotango t)
@@ -1715,10 +1731,10 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
     ("713f898dd8c881c139b62cf05b7ac476d05735825d49006255c0a31f9a4f46ab" "f71859eae71f7f795e734e6e7d178728525008a28c325913f564a42f74042c31" default)))
  '(org-agenda-files
    (quote
-    ("~/Documents/org/nsf-research-statement.org" "/Users/jeremiah/Documents/org/agenda.org" "/Users/jeremiah/Documents/org/inbox.org" "/Users/jeremiah/Documents/org/index.org" "/Users/jeremiah/Documents/org/geu.org" "/Users/jeremiah/Documents/org/333.org" "/Users/jeremiah/Documents/org/calsync/jeremiahpeschka-cal.org" "/Users/jeremiah/Documents/org/calsync/legitbiz-cal.org" "/Users/jeremiah/Documents/org/calsync/jpeschka-cal.org")))
+    ("~/Documents/pdx.edu/CS669/p01.org" "~/Documents/org/nsf-research-statement.org" "/Users/jeremiah/Documents/org/agenda.org" "/Users/jeremiah/Documents/org/inbox.org" "/Users/jeremiah/Documents/org/index.org" "/Users/jeremiah/Documents/org/geu.org" "/Users/jeremiah/Documents/org/333.org" "/Users/jeremiah/Documents/org/calsync/jeremiahpeschka-cal.org" "/Users/jeremiah/Documents/org/calsync/legitbiz-cal.org" "/Users/jeremiah/Documents/org/calsync/jpeschka-cal.org")))
  '(package-selected-packages
    (quote
-    (hlint-refactor hindent helm-hoogle company-ghci intero undo-tree stickyfunc-enhance company-c-headers helm-gtags ggtags git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra)))
+    (langtool writegood-mode hlint-refactor hindent helm-hoogle company-ghci intero undo-tree stickyfunc-enhance company-c-headers helm-gtags ggtags git-gutter multi-term treemacs-projectile treemacs paredit fancy-battery nyan-mode spaceline-all-the-icons spaceline all-the-icons notmuch racket-mode tuareg keyfreq mac-pseudo-daemon tangotango-theme benchmark-init org-ref interleave smartparens markdown-mode dash-functional dash-at-point org-super-agenda exec-path-from-shell flycheck flycheck-haskell haskell-mode gh magit magit-gh-pulls lsp-ui lsp-mode lsp-haskell company company-cabal company-lsp company-prescient restart-emacs projectile helm-projectile helm-rg ace-window helm helm-bibtex org org-bullets org-journal org-plus-contrib pdf-tools which-key use-package challenger-deep-theme rainbow-delimiters hydra)))
  '(tab-width 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
