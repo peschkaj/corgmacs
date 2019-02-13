@@ -135,15 +135,9 @@
 (require 'corgmacs-cpp)
 
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; haskell
 (require 'corgmacs-haskell)
-
-
-
-
 
 
 
@@ -171,12 +165,7 @@
       org-ref-default-bibliography (list jp/papers-refs)
       org-ref-pdf-directory        jp/papers-pdfs)
 
-
-
-
-
-
-
+(require 'corgmacs-org)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font ligatures
@@ -187,6 +176,7 @@
     (mac-auto-operator-composition-mode))
 
 (set-default-font "PragmataPro Liga 16" t t)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

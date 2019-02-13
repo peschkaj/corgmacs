@@ -276,5 +276,5 @@
               (org-bullets-mode 1))))
 
 
-(provide 'cormags-org)
+(provide 'corgmacs-org)
 ;;; corgmacs-org.el ends here
