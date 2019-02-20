@@ -59,9 +59,9 @@
           fill-column 80)
 
     ;; set default directories
-    (setq org-directory (concat jp/docs "org/"))
-    (setq jp/org-inbox-file (concat org-directory "inbox.org"))
-    (setq org-default-notes-file jp/org-inbox-file)
+    (setq org-directory (concat corgmacs/docs "org/"))
+    (setq corgmacs/org-inbox-file (concat org-directory "inbox.org"))
+    (setq org-default-notes-file corgmacs/org-inbox-file)
 
     ;; set the archive
     (setq org-agenda-custom-commands
@@ -189,14 +189,13 @@
        (format "'%s'" msg)))                                ;; passed to -message in terminal-notifier call
     (setq appt-disp-window-function (function my-appt-display))
 
-    
     ;; t - Prompt for a title and then add to index.org unless you refile it
     (setq org-capture-templates
-          '(("t" "todo" entry (file jp/org-inbox-file)
+          '(("t" "todo" entry (file corgmacs/org-inbox-file)
              "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
             ("m" "Meeting" entry (file org-default-notes-file)
              "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-            ("i" "Idea" entry (file jp/org-inbox-file)
+            ("i" "Idea" entry (file corgmacs/org-inbox-file)
              "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
             ("n" "Next Task" entry (file+headline org-inbox-file "Tasks")
              "** NEXT %? \nDEADLINE: %t")))
@@ -216,14 +215,14 @@
 
     ;; (add-hook 'after-save-hook 'update-org-src-locs)
 
-    (defun jp/org-template ()
+    (defun corgmacs/org-template ()
       (insert "#+AUTHOR: Jeremiah Peschka
 #+EMAIL: jeremiah.peschka@gmail.com
 #+STARTUP: indent showall
 #+OPTIONS: tags:nil")
       (org-mode-restart))
 
-    (define-auto-insert "\\.org$" #'jp/org-template)
+    (define-auto-insert "\\.org$" #'corgmacs/org-template)
 
 
     ;; agenda & diary

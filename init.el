@@ -143,14 +143,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up base folders for documents and PDFs and such...
-(defvar jp/docs (expand-file-name "~/Documents/") "Documents folder.")
-(defvar jp/papers-base (concat jp/docs "reading/") "Location for reading library including PDFs, bibliography, and notes.")
-(defvar jp/papers-pdfs (concat jp/papers-base "lib/") "PDF folder.")
-(defvar jp/papers-notes (concat jp/papers-base "index.org") "Default location for notes about papers.")
-(defvar jp/papers-refs  (concat jp/papers-base "index.bib") "Bibliography.")
-(setq bibtex-completion-bibliography (list jp/papers-refs)
-      bibtex-completion-library-path jp/papers-pdfs
-      bibtex-completion-notes-path   jp/papers-notes
+(defvar corgmacs/docs (expand-file-name "~/Documents/") "Documents folder.")
+(defvar corgmacs/papers-base (concat corgmacs/docs "reading/") "Location for reading library including PDFs, bibliography, and notes.")
+(defvar corgmacs/papers-pdfs (concat corgmacs/papers-base "lib/") "PDF folder.")
+(defvar corgmacs/papers-notes (concat corgmacs/papers-base "index.org") "Default location for notes about papers.")
+(defvar corgmacs/papers-refs  (concat corgmacs/papers-base "index.bib") "Bibliography.")
+(setq bibtex-completion-bibliography (list corgmacs/papers-refs)
+      bibtex-completion-library-path corgmacs/papers-pdfs
+      bibtex-completion-notes-path   corgmacs/papers-notes
       bibtex-completion-pdf-field    "file"
       bibtex-completion-display-formats '((article       . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${journal:40}")
                                           (inbook        . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} Chapter ${chapter:32}")
@@ -158,12 +158,12 @@
                                           (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${booktitle:40}")
                                           (t             . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*}"))
       bibtex-completion-additional-search-fields '(keywords journal title)
-      reftex-default-bibliography  (list jp/papers-refs)
+      reftex-default-bibliography  (list corgmacs/papers-refs)
       org-ref-completion-libary   'org-ref-helm-cite
-      org-ref-notes-directory      jp/papers-base
-      org-ref-bibliography-notes   jp/papers-notes
-      org-ref-default-bibliography (list jp/papers-refs)
-      org-ref-pdf-directory        jp/papers-pdfs)
+      org-ref-notes-directory      corgmacs/papers-base
+      org-ref-bibliography-notes   corgmacs/papers-notes
+      org-ref-default-bibliography (list corgmacs/papers-refs)
+      org-ref-pdf-directory        corgmacs/papers-pdfs)
 
 (require 'corgmacs-org)
 
