@@ -40,6 +40,14 @@
 (package-initialize)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Create a new custom-file
+;;
+;; Having our own custom file means emacs doesn't poop all over this file and
+;; constantly generate false changes for version control.
+(setq custom-file "~/.emacs-custom.el")
+(load custom-file 'noerror)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; benchmark-init
 ;;
 ;; Uncomment this if emacs is being slow on startup.
@@ -367,7 +375,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; configuration for spaceline + spaceline-all-the-icons
 (use-package all-the-icons
-  :ensure t)
+  :ensure t
+  :pin melpa-stable)
 
 (use-package nyan-mode
   :ensure t
