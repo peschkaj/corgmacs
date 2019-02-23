@@ -455,7 +455,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (setq-default indent-tabs-mode  nil
               default-tab-width 2
               c-basic-offset    2)
-(add-hook 'makefile-bsd-mode-hook '(setq indent-tabs-mode t))
+(add-hook 'makefile-bsd-mode-hook   '(setq indent-tabs-mode t))
+(add-hook 'makefile-gmake-mode-hook '(setq indent-tabs-mode t))
 
 (setq sentence-end-double-space nil  ;; It's the 21st century, sentences can end with only one space.
       help-window-select t           ;; Immediately select the help window so it can be killed with 'q'
