@@ -23,17 +23,150 @@
 ;;; Code goes here, moron.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;; Sane defaults, please
+(setq inhibit-startup-screen t                ;; the welcome screen is for guests only, I'm at home now!
+      initial-scratch-message nil             ;; remove the message in the scratch buffer
+      visible-bell t                          ;; remove the annoying beep
+      apropos-do-all t                        ;; apropos commands perform more extensive searches than default
+      large-file-warning-threshold 100000000  ;; warn only when opening files bigger than 100MB
+      display-time-default-load-average nil   ;; nobody needs load average
+      display-time-24hr-format 1)
 
+(setq-default fill-column 80)                 ;; 70 columns isn't enough
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; no bars, no gui menus
+(if (display-graphic-p)
+    (progn
+     (tool-bar-mode   -1)
+     (scroll-bar-mode -1)))
+
 ;; no menu-bar
 (if (eq (boundp 'menu-bar-mode) t)
     (menu-bar-mode -1))
 
+;; replace yes/no questions with y/n
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; Delete selected text when typing
+;(delete-selection-mode 1)
+
+;; show the empty lines at the end (bottom) of the buffer
+(toggle-indicate-empty-lines)
+
+;; delete the previous selection when overrides it with a new insertion.
+(delete-selection-mode)
+
+;; the blinking cursor is pretty annoying, so disable it.
+(blink-cursor-mode -1)
+
+;; Move file to trash instead of removing.
+(setq-default delete-by-moving-to-trash t)
+
+;; Revert (update) buffers automatically when underlying files are changed externally.
+(global-auto-revert-mode t)
+
+;; make sure that UTF-8 is used everywhere.
+(set-terminal-coding-system  'utf-8)
+(set-keyboard-coding-system  'utf-8)
+(set-language-environment    'utf-8)
+(set-selection-coding-system 'utf-8)
+(setq locale-coding-system   'utf-8)
+(prefer-coding-system        'utf-8)
+(set-input-method nil)
+
+;; always indent with spaces... except Makefiles
+(setq-default indent-tabs-mode  nil
+              default-tab-width 2
+              c-basic-offset    2)
+(add-hook 'makefile-bsd-mode-hook   '(setq indent-tabs-mode t))
+(add-hook 'makefile-gmake-mode-hook '(setq indent-tabs-mode t))
+
+(setq sentence-end-double-space nil  ;; It's the 21st century, sentences can end with only one space.
+      help-window-select t           ;; Immediately select the help window so it can be killed with 'q'
+      )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set up some temporary folders
+(defvar corgmacs/emacs-temp-directory (concat user-emacs-directory "tmp/"))
+(unless (file-exists-p corgmacs/emacs-temp-directory)
+  (make-directory corgmacs/emacs-temp-directory))
+
+;; Change the autosave location
+(defvar corgmacs/emacs-autosave-directory (concat user-emacs-directory "auto-save/"))
+(unless (file-exists-p corgmacs/emacs-autosave-directory)
+  (make-directory corgmacs/emacs-autosave-directory))
+(setq backup-directory-alist `(("." . ,corgmacs/emacs-autosave-directory)))
+(setq auto-save-list-file-prefix corgmacs/emacs-autosave-directory)
+(setq auto-save-file-name-transforms `((".*" ,corgmacs/emacs-autosave-directory t)))
+(setq make-backup-files t               ; backup of a file the first time it is saved.
+      backup-by-copying t               ; don't clobber symlinks
+      version-control t                 ; version numbers for backup files
+      delete-old-versions t             ; delete excess backup files silently
+      delete-by-moving-to-trash t
+      kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+      kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+      auto-save-default t               ; auto-save every buffer that visits a file
+      auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+      auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+      )
+
+
+
+
+;; Let's keep some command history
+(setq-default history-length 1000)
+(setq savehist-file (concat corgmacs/emacs-temp-directory "history")
+      history-delete-duplicates t
+      savehist-save-minibuffer-history 1
+      savehist-additional-variables
+      '(kill-ring
+        search-ring
+        regexp-search-ring))
+(savehist-mode t)
+
+;; Keep a history of recently accessed files
+(use-package recentf
+  :config
+  (progn
+    (setq recentf-save-file (concat corgmacs/emacs-temp-directory "recentf")
+          recentf-max-saved-items 100
+          recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG"))
+    (recentf-mode t)))
+(add-to-list 'recentf-exclude (format "%s/\\.emacs\\.d/elpa/.*" (getenv "HOME")))
+
+(setq-default tramp-persistency-file-name (concat corgmacs/emacs-temp-directory "tramp")             ;; Tramp history
+              bookmark-default-file (concat corgmacs/emacs-temp-directory "bookmarks")               ;; Bookmarks file
+              semanticdb-default-save-directory (concat corgmacs/emacs-temp-directory "semanticdb")  ;; SemanticDB files
+              url-configuration-directory (concat corgmacs/emacs-temp-directory "url")               ;; url files
+              eshell-directory-name (concat corgmacs/emacs-temp-directory "eshell" )                 ;; eshell files
+              )
+
+;; history of recent actions
+(setq-default history-length 1000)
+(setq savehist-file (concat corgmacs/emacs-temp-directory "history")
+      history-delete-duplicates t
+      savehist-save-minibuffer-history 1
+      savehist-additional-variables
+      '(kill-ring
+        search-ring
+        regexp-search-ring))
+(savehist-mode t)
+
+;; History of recent files
+(use-package recentf
+  :config
+  (progn
+    (setq recentf-save-file (concat corgmacs/emacs-temp-directory "recentf")
+          recentf-max-saved-items 100
+          recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG"))
+    (recentf-mode t)))
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Blackout - control the mode line
+;; TODO: need a better way to force this...
 (add-to-list 'load-path "~/src/blackout")
 (use-package blackout)
 
@@ -184,7 +317,6 @@ backends will still be included.")
   :blackout t)
 
 
-
 ;; Package `company-prescient' provides intelligent sorting and
 ;; filtering for candidates in Company completions.
 (use-package company-prescient
@@ -197,18 +329,15 @@ backends will still be included.")
   (company-prescient-mode +1))
 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yay for custom menus via hydra
 (use-package hydra
   :ensure t)
 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ediff config
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-
+(defvar ediff-window-setup-function 'ediff-setup-windows-plain)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -240,12 +369,12 @@ backends will still be included.")
       "
 Movement^^	^Split^		^Switch^		^Resize^
 ----------------------------------------------------------------
-_h_ ←		_v_ertical	_b_uffer		_q_ X←
-_j_ ↓		_x_ horizontal	_f_ind files	_w_ X↓
-_k_ ↑		_z_ undo		_a_ce 1		_e_ X↑
-_l_ →		_Z_ reset		_s_wap		_r_ X→
-_F_ollow		_D_lt Other	_S_ave		max_i_mize
-_SPC_ cancel	_o_nly this	_d_elete
+_h_ ←      _v_ertical      _b_uffer      _q_ X←
+_j_ ↓       _x_ horizontal  _f_ind files  _w_ X↓
+_k_ ↑       _z_ undo        _a_ce 1       _e_ X↑
+_l_ →      _Z_ reset       _s_wap        _r_ X→
+_F_ollow    _D_lt Other     _S_ave        max_i_mize
+_SPC_ cancel                _o_nly this   _d_elete
 "
   ("h" windmove-left )
   ("j" windmove-down )
@@ -401,153 +530,12 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (add-hook 'ibuffer-hook #'hydra-ibuffer-main/body)
 
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Sane defaults, please
-(setq inhibit-startup-screen t                ;; the welcome screen is for guests only, I'm at home now!
-      initial-scratch-message nil             ;; remove the message in the scratch buffer
-      visible-bell t                          ;; remove the annoying beep
-      apropos-do-all t                        ;; apropos commands perform more extensive searches than default
-      large-file-warning-threshold 100000000  ;; warn only when opening files bigger than 100MB
-      display-time-default-load-average nil   ;; nobody needs load average
-      display-time-24hr-format 1)
-
-(setq-default fill-column 80)                 ;; 70 columns isn't enough
-
-
-;; no bars, no gui menus
-(if (display-graphic-p)
-    (progn
-     (tool-bar-mode   -1)
-     (scroll-bar-mode -1)))
-
-;; replace yes/no questions with y/n
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; Delete selected text when typing
-;(delete-selection-mode 1)
-
-;; show the empty lines at the end (bottom) of the buffer
-(toggle-indicate-empty-lines)
-
-;; delete the previous selection when overrides it with a new insertion.
-(delete-selection-mode)
-
-;; the blinking cursor is pretty annoying, so disable it.
-(blink-cursor-mode -1)
-
-;; Move file to trash instead of removing.
-(setq-default delete-by-moving-to-trash t)
-
-;; Revert (update) buffers automatically when underlying files are changed externally.
-(global-auto-revert-mode t)
-
-;; make sure that UTF-8 is used everywhere.
-(set-terminal-coding-system  'utf-8)
-(set-keyboard-coding-system  'utf-8)
-(set-language-environment    'utf-8)
-(set-selection-coding-system 'utf-8)
-(setq locale-coding-system   'utf-8)
-(prefer-coding-system        'utf-8)
-(set-input-method nil)
-
-;; always indent with spaces... except Makefiles
-(setq-default indent-tabs-mode  nil
-              default-tab-width 2
-              c-basic-offset    2)
-(add-hook 'makefile-bsd-mode-hook   '(setq indent-tabs-mode t))
-(add-hook 'makefile-gmake-mode-hook '(setq indent-tabs-mode t))
-
-(setq sentence-end-double-space nil  ;; It's the 21st century, sentences can end with only one space.
-      help-window-select t           ;; Immediately select the help window so it can be killed with 'q'
-      )
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Set up some temporary folders
-(defvar jp/emacs-temp-directory (concat user-emacs-directory "tmp/"))
-(unless (file-exists-p jp/emacs-temp-directory)
-  (make-directory jp/emacs-temp-directory))
-
-;; Change the autosave location
-(defvar jp/emacs-autosave-directory (concat user-emacs-directory "auto-save/"))
-(unless (file-exists-p jp/emacs-autosave-directory)
-  (make-directory jp/emacs-autosave-directory))
-(setq backup-directory-alist `(("." . ,jp/emacs-autosave-directory)))
-(setq auto-save-list-file-prefix jp/emacs-autosave-directory)
-(setq auto-save-file-name-transforms `((".*" ,jp/emacs-autosave-directory t)))
-(setq make-backup-files t               ; backup of a file the first time it is saved.
-      backup-by-copying t               ; don't clobber symlinks
-      version-control t                 ; version numbers for backup files
-      delete-old-versions t             ; delete excess backup files silently
-      delete-by-moving-to-trash t
-      kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
-      kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
-      auto-save-default t               ; auto-save every buffer that visits a file
-      auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
-      auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
-      )
-
-
-
-
-;; Let's keep some command history
-(setq-default history-length 1000)
-(setq savehist-file (concat jp/emacs-temp-directory "history")
-      history-delete-duplicates t
-      savehist-save-minibuffer-history 1
-      savehist-additional-variables
-      '(kill-ring
-        search-ring
-        regexp-search-ring))
-(savehist-mode t)
-
-;; Keep a history of recently accessed files
-(use-package recentf
-  :config
-  (progn
-    (setq recentf-save-file (concat jp/emacs-temp-directory "recentf")
-          recentf-max-saved-items 100
-          recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG"))
-    (recentf-mode t)))
-(add-to-list 'recentf-exclude (format "%s/\\.emacs\\.d/elpa/.*" (getenv "HOME")))
-
-(setq-default tramp-persistency-file-name (concat jp/emacs-temp-directory "tramp")             ;; Tramp history
-              bookmark-default-file (concat jp/emacs-temp-directory "bookmarks")               ;; Bookmarks file
-              semanticdb-default-save-directory (concat jp/emacs-temp-directory "semanticdb")  ;; SemanticDB files
-              url-configuration-directory (concat jp/emacs-temp-directory "url")               ;; url files
-              eshell-directory-name (concat jp/emacs-temp-directory "eshell" )                 ;; eshell files
-              )
-
-;; history of recent actions
-(setq-default history-length 1000)
-(setq savehist-file (concat jp/emacs-temp-directory "history")
-      history-delete-duplicates t
-      savehist-save-minibuffer-history 1
-      savehist-additional-variables
-      '(kill-ring
-        search-ring
-        regexp-search-ring))
-(savehist-mode t)
-
-;; History of recent files
-(use-package recentf
-  :config
-  (progn
-    (setq recentf-save-file (concat jp/emacs-temp-directory "recentf")
-          recentf-max-saved-items 100
-          recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG"))
-    (recentf-mode t)))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Join lines fromthe top instead of from the bottom
 (defun top-join-line ()
   "Join the current line with the line beneath it."
   (interactive)
   (delete-indentation 1))
-
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

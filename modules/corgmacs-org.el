@@ -23,6 +23,44 @@
 ;;; Code goes here, moron.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set up base folders for documents and PDFs and such...
+;;
+;; The assumed hierarchy is:
+;;   Documents
+;;   |- reading
+;;   |  |- lib
+;;   |
+;;   |- index.org
+;;   |- index.bib
+(defvar corgmacs/docs
+  (expand-file-name "~/Documents/") "Documents folder.")
+(defvar corgmacs/papers-base
+  (concat corgmacs/docs "reading/") "Location for reading library including PDFs, bibliography, and notes.")
+(defvar corgmacs/papers-pdfs
+  (concat corgmacs/papers-base "lib/") "PDF folder.")
+(defvar corgmacs/papers-notes
+  (concat corgmacs/papers-base "index.org") "Default location for notes about papers.")
+(defvar corgmacs/papers-refs
+  (concat corgmacs/papers-base "index.bib") "Bibliography.")
+(setq bibtex-completion-bibliography (list corgmacs/papers-refs)
+  bibtex-completion-library-path corgmacs/papers-pdfs
+  bibtex-completion-notes-path   corgmacs/papers-notes
+  bibtex-completion-pdf-field    "file"
+  bibtex-completion-display-formats
+  '((article       . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${journal:40}")
+    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} Chapter ${chapter:32}")
+    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${booktitle:40}")
+    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${booktitle:40}")
+    (t             . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*}"))
+  bibtex-completion-additional-search-fields '(keywords journal title)
+  reftex-default-bibliography  (list corgmacs/papers-refs)
+  org-ref-completion-libary   'org-ref-helm-cite
+  org-ref-notes-directory      corgmacs/papers-base
+  org-ref-bibliography-notes   corgmacs/papers-notes
+  org-ref-default-bibliography (list corgmacs/papers-refs)
+  org-ref-pdf-directory        corgmacs/papers-pdfs)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode
 (use-package org
   ;:defer 1
@@ -177,8 +215,8 @@
     (add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt) ;; update appt list on agenda view
 
     ;; set up the call to terminal-notifier
-    (defvar my-notifier-path
-      "/usr/local/bin/terminal-notifier")
+    ;; TODO move to platform specific config file
+
     (defun my-appt-send-notification (title msg)
       (shell-command (concat my-notifier-path " -message " msg " -title " title " -sender org.gnu.Emacs ")))
 

@@ -51,7 +51,7 @@
 ;; benchmark-init
 ;;
 ;; Uncomment this if emacs is being slow on startup.
-;; View important timing stats with M-x bencmark-init/show-durations-tabluation
+;; View important timing stats with M-x benchmark-init/show-durations-tabluation
 ;;
 ;; (use-package benchmark-init
 ;;   :ensure t
@@ -111,29 +111,55 @@
 ;;
 ;; Figure out the path to our .emacs.d by getting the path part of the
 ;; current file (`init.el`).
-(setq dotfiles-dir (file-name-directory
-                    (or (buffer-file-name) (file-chase-links load-file-name))))
+(defvar corgmacs/dotfiles-dir (file-name-directory
+                               (or (buffer-file-name) (file-chase-links load-file-name))))
 
 ;; Individual modules are stored in a `modules` subdirectory of .emacs.d; it's
 ;; necessary to add these modules explicitly to the load-path.
-(add-to-list 'load-path (concat dotfiles-dir "modules"))
+(add-to-list 'load-path (concat corgmacs/dotfiles-dir "modules"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tramp settings
 ;;
-;; ZSH on the PDX servers caused problems with tramp hanging.
-;; Force to bash instead to make life simple.
-;;
-;; Mon Jun 19 17:43:56 PDT 2017
-;; I'm not sure but this _might_ be causing problems for my local TRAMP mode
-;;
-;; Wed Dec 26 07:45:35 PDT 2018
-;; tramp hangs are fixed by adding the following AT THE VERY END of .zshrc
-;; (or .zshrc.local)
+;; If you experience tramp hangs, they can fixed by adding the following AT THE
+;; VERY END of .zshrc (or .zshrc.local):
 ;; [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
 (use-package tramp
   :init (setq tramp-ssh-controlmaster-options nil))
 
+(defvar corgmacs/notifier-path
+  "/usr/bin/dunst"
+  "Notifier program. Can be overriden via ~/.emacs-custom.el")
+
+;; TODO probably need to load0file
+;; Check the OS and load any OS specific whatnot...
+;; (let ((corgmacs/os-customizations
+;;        (cond ((eq system-type 'darwin)
+;; 	      "modules/corgmacs-macos.el")
+;; 	      "modules/corgmacs-linux.el")))
+;;   (if (file-readable-p corgmacs/os-customizations)
+;;       (load-file corgmacs/os-customizations)))
+(let ((corgmacs/os-customizations
+       ;; N.B. This only detects Windows. Everything else is assumed to be some kind of *nix variant
+       (cond ((eq system-type 'windows-nt)
+              (expand-file-name "cormacs-windows.el" (concat corgmacs/dotfiles-dir "modules")))
+             ((eq system-type 'darwin)
+              (expand-file-name "corgmacs-macos.el" (concat corgmacs/dotfiles-dir "modules")))
+             (t (expand-file-name "corgmacs-linux.el" (concat corgmacs/dotfiles-dir "modules")))
+         )))
+  (if (file-readable-p corgmacs/os-customizations)
+      (load-file corgmacs/os-customizations)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General settings
+;;
+;; Includes:
+;;  - Sane defaults for warnings
+;;  - Time formatted to a 24 hour clock
+;;  - Removal of tool, menu, and scroll bars
+;;  - Setting up a temporary and autosave location
+;;  - Setting up sane defaults around autosaving files
 (require 'corgmacs-general)
 (require 'corgmacs-editing)
 (require 'corgmacs-helm)
@@ -148,67 +174,9 @@
 (require 'corgmacs-haskell)
 
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Set up base folders for documents and PDFs and such...
-(defvar corgmacs/docs (expand-file-name "~/Documents/") "Documents folder.")
-(defvar corgmacs/papers-base (concat corgmacs/docs "reading/") "Location for reading library including PDFs, bibliography, and notes.")
-(defvar corgmacs/papers-pdfs (concat corgmacs/papers-base "lib/") "PDF folder.")
-(defvar corgmacs/papers-notes (concat corgmacs/papers-base "index.org") "Default location for notes about papers.")
-(defvar corgmacs/papers-refs  (concat corgmacs/papers-base "index.bib") "Bibliography.")
-(setq bibtex-completion-bibliography (list corgmacs/papers-refs)
-      bibtex-completion-library-path corgmacs/papers-pdfs
-      bibtex-completion-notes-path   corgmacs/papers-notes
-      bibtex-completion-pdf-field    "file"
-      bibtex-completion-display-formats '((article       . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${journal:40}")
-                                          (inbook        . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} Chapter ${chapter:32}")
-                                          (incollection  . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${booktitle:40}")
-                                          (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*} ${booktitle:40}")
-                                          (t             . "${=has-pdf=:1}${=has-note=:1} ${=type=:3}  ${author:36} ${title:*}"))
-      bibtex-completion-additional-search-fields '(keywords journal title)
-      reftex-default-bibliography  (list corgmacs/papers-refs)
-      org-ref-completion-libary   'org-ref-helm-cite
-      org-ref-notes-directory      corgmacs/papers-base
-      org-ref-bibliography-notes   corgmacs/papers-notes
-      org-ref-default-bibliography (list corgmacs/papers-refs)
-      org-ref-pdf-directory        corgmacs/papers-pdfs)
-
 (require 'corgmacs-org)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Font ligatures
-;;
-;; TODO Replace this with a check that either loads mac-auto-operator-composition-mode
-;;      -OR- uses prettify symbols
-(if (fboundp 'mac-auto-operator-composition-mode)
-    (mac-auto-operator-composition-mode))
-
-(set-default-font "PragmataPro Liga 16" t t)
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; macOS:
-;;
-;; Raise emacs on activation
-(when (featurep 'ns)
-  (defun ns-raise-emacs ()
-    "Raise Emacs."
-    (ns-do-applescript "tell application \"Emacs\" to activate"))
-
-  (defun ns-raise-emacs-with-frame (frame)
-    "Raise Emacs and select the provided frame."
-    (with-selected-frame frame
-      (when (display-graphic-p)
-        (ns-raise-emacs))))
-
-  (add-hook 'after-make-frame-functions 'ns-raise-emacs-with-frame)
-
-  (when (display-graphic-p)
-    (ns-raise-emacs)))
-
-;; Set right command to super
-(setq mac-right-command-modifier 'super)
+(set-default-font "PragmataPro 12" t t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -220,7 +188,10 @@
             `(,(car s)
               .
               ,(vconcat
-                (apply 'vconcat (make-list (- (length (car s)) 1) (vector (decode-char 'ucs #X0020) '(Br . Bl))))
+                (apply 'vconcat
+                       (make-list
+                        (- (length (car s)) 1)
+                        (vector (decode-char 'ucs #X0020) '(Br . Bl))))
                 (vector (decode-char 'ucs (cadr s))))))
           '(("[ERROR]"   #XE380)
             ("[DEBUG]"   #XE381)
@@ -232,11 +203,83 @@
             ("[TRACE]"   #XE387)
             ("[FIXME]"   #XE388)
             ("[TODO]"    #XE389)
-            ("TODO"      #XE389)
             ("[BUG]"     #XE38A)
             ("[NOTE]"    #XE38B)
             ("[HACK]"    #XE38C)
             ("[MARK]"    #XE38D)
+            ("!!"        #XE900)
+            ("!="        #XE901)
+            ("!=="       #XE902)
+            ("!!!"       #XE903)
+            ("!≡"        #XE904)
+            ("!≡≡"       #XE905)
+            ("!>"        #XE906)
+            ("!=<"       #XE907)
+            ("#("        #XE920)
+            ("#_"        #XE921)
+            ("#{"        #XE922)
+            ("#?"        #XE923)
+            ("#>"        #XE924)
+            ("##"        #XE925)
+            ("#_("       #XE926)
+            ("%="        #XE930)
+            ("%>"        #XE931)
+            ("%>%"       #XE932)
+            ("%<%"       #XE933)
+            ("&%"        #XE940)
+            ("&&"        #XE941)
+            ("&*"        #XE942)
+            ("&+"        #XE943)
+            ("&-"        #XE944)
+            ("&/"        #XE945)
+            ("&="        #XE946)
+            ("&&&"       #XE947)
+            ("&>"        #XE948)
+            ("$>"        #XE955)
+            ("***"       #XE960)
+            ("*="        #XE961)
+            ("*/"        #XE962)
+            ("*>"        #XE963)
+            ("++"        #XE970)
+            ("+++"       #XE971)
+            ("+="        #XE972)
+            ("+>"        #XE973)
+            ("++="       #XE974)
+            ("--"        #XE980)
+            ("-<"        #XE981)
+            ("-<<"       #XE982)
+            ("-="        #XE983)
+            ("->"        #XE984)
+            ("->>"       #XE985)
+            ("---"       #XE986)
+            ("-->"       #XE987)
+            ("-+-"       #XE988)
+            ("-\\/"      #XE989)
+            ("-|>"       #XE98A)
+            ("-<|"       #XE98B)
+            (".."        #XE990)
+            ("..."       #XE991)
+            ("..<"       #XE992)
+            (".>"        #XE993)
+            (".~"        #XE994)
+            (".="        #XE995)
+            ("/*"        #XE9A0)
+            ("//"        #XE9A1)
+            ("/>"        #XE9A2)
+            ("/="        #XE9A3)
+            ("/=="       #XE9A4)
+            ("///"       #XE9A5)
+            ("/**"       #XE9A6)
+            (":::"       #XE9AF)
+            ("::"        #XE9B0)
+            (":="        #XE9B1)
+            (":≡"        #XE9B2)
+            (":>"        #XE9B3)
+            (":=>"       #XE9B4)
+            (":("        #XE9B5)
+            (":-("       #XE9B6)
+            (":)"        #XE9B7)
+            (":-)"       #XE9B8)
             (":/"        #XE9B9)
             (":\\"       #XE9BA)
             (":3"        #XE9BB)
@@ -244,20 +287,94 @@
             (":P"        #XE9BD)
             (":>:"       #XE9BE)
             (":<:"       #XE9BF)
+            ("<$>"       #XE9C0)
+            ("<*"        #XE9C1)
+            ("<*>"       #XE9C2)
+            ("<+>"       #XE9C3)
+            ("<-"        #XE9C4)
+            ("<<"        #XE9C5)
+            ("<<<"       #XE9C6)
+            ("<<="       #XE9C7)
+            ("<="        #XE9C8)
+            ("<=>"       #XE9C9)
+            ("<>"        #XE9CA)
+            ("<|>"       #XE9CB)
+            ("<<-"       #XE9CC)
+            ("<|"        #XE9CD)
+            ("<=<"       #XE9CE)
+            ("<~"        #XE9CF)
+            ("<~~"       #XE9D0)
+            ("<<~"       #XE9D1)
+            ("<$"        #XE9D2)
+            ("<+"        #XE9D3)
+            ("<!>"       #XE9D4)
+            ("<@>"       #XE9D5)
+            ("<#>"       #XE9D6)
+            ("<%>"       #XE9D7)
+            ("<^>"       #XE9D8)
+            ("<&>"       #XE9D9)
+            ("<?>"       #XE9DA)
+            ("<.>"       #XE9DB)
+            ("</>"       #XE9DC)
             ("<\\>"      #XE9DD)
+            ("<\">"      #XE9DE)
+            ("<:>"       #XE9DF)
+            ("<~>"       #XE9E0)
+            ("<**>"      #XE9E1)
+            ("<<^"       #XE9E2)
+            ("<!"        #XE9E3)
+            ("<@"        #XE9E4)
+            ("<#"        #XE9E5)
+            ("<%"        #XE9E6)
+            ("<^"        #XE9E7)
+            ("<&"        #XE9E8)
+            ("<?"        #XE9E9)
+            ("<."        #XE9EA)
+            ("</"        #XE9EB)
+            ("<\\"       #XE9EC)
+            ("<\""       #XE9ED)
+            ("<:"        #XE9EE)
+            ("<->"       #XE9EF)
+            ("<!--"      #XE9F0)
+            ("<--"       #XE9F1)
+            ("<~<"       #XE9F2)
+            ("<==>"      #XE9F3)
+            ("<|-"       #XE9F4)
+            ("<<|"       #XE9F5)
+            ("<-<"       #XE9F7)
+            ("<-->"      #XE9F8)
+            ("<<=="      #XE9F9)
+            ("<=="       #XE9FA)
+            ("==<"       #XEA00)
+            ("=="        #XEA01)
+            ("==="       #XEA02)
+            ("==>"       #XEA03)
+            ("=>"        #XEA04)
+            ("=~"        #XEA05)
+            ("=>>"       #XEA06)
+            ("=/="       #XEA07)
+            ("=~="       #XEA08)
+            ("==>>"      #XEA09)
+            ("≡≡"        #XEA10)
+            ("≡≡≡"       #XEA11)
+            ("≡:≡"       #XEA12)
             (">-"        #XEA20)
             (">="        #XEA21)
             (">>"        #XEA22)
             (">>-"       #XEA23)
-            (">>="       #XEA24)
+            (">=="       #XEA24)
             (">>>"       #XEA25)
             (">=>"       #XEA26)
             (">>^"       #XEA27)
+            (">>|"       #XEA28)
+            (">!="       #XEA29)
+            (">->"       #XEA2A)
             ("??"        #XEA40)
             ("?~"        #XEA41)
             ("?="        #XEA42)
             ("?>"        #XEA43)
             ("???"       #XEA44)
+            ("?."        #XEA45)
             ("^="        #XEA48)
             ("^."        #XEA49)
             ("^?"        #XEA4A)
@@ -267,7 +384,36 @@
             ("^>"        #XEA4E)
             ("\\\\"      #XEA50)
             ("\\>"       #XEA51)
-            ("\\/-"      #XEA52))))
+            ("\\/-"      #XEA52)
+            ("@>"        #XEA57)
+            ("|="        #XEA60)
+            ("||"        #XEA61)
+            ("|>"        #XEA62)
+            ("|||"       #XEA63)
+            ("|+|"       #XEA64)
+            ("|->"       #XEA65)
+            ("|-->"      #XEA66)
+            ("|=>"       #XEA67)
+            ("|==>"      #XEA68)
+            ("|>-"       #XEA69)
+            ("|<<"       #XEA6A)
+            ("||>"       #XEA6B)
+            ("|>>"       #XEA6C)
+            ("|-"        #XEA6D)
+            ("||-"       #XEA6E)
+            ("~="        #XEA70)
+            ("~>"        #XEA71)
+            ("~~>"       #XEA72)
+            ("~>>"       #XEA73)
+            ("[["        #XEA80)
+            ("]]"        #XEA81)
+            ("\">"       #XEA90)
+            ("_|_"       #XEA97)
+            )))
+
+(defun add-pragmatapro-prettify-symbols-alist ()
+  (dolist (alias pragmatapro-prettify-symbols-alist)
+    (push alias prettify-symbols-alist)))
 
 (defun fp-prettify-symbols ()
   "Make the letters pretty!"
@@ -298,12 +444,6 @@
           )))
 
 
-(defun add-pragmatapro-prettify-symbols-alist ()
-  "Make sure the letters are pretty when we use Pragmata Pro."
-  (dolist (alias pragmatapro-prettify-symbols-alist)
-    (push alias prettify-symbols-alist)))
-
-
 (when (display-graphic-p)
   (add-hook 'haskell-mode-hook #'fp-prettify-symbols)
   (add-hook 'prog-mode-hook #'add-pragmatapro-prettify-symbols-alist)
@@ -318,11 +458,6 @@
    "Major mode for editing GitHub Flavored Markdown files" t))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Disable smooth scrolling
-(when (eq system-type 'darwin)
-  (if mac-mouse-wheel-smooth-scroll
-      (setq mac-mouse-wheel-smooth-scroll nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keyfreq
@@ -336,41 +471,6 @@
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; notmuch configuration
-;; (autoload 'notmuch "notmuch" "notmuch mail" t)
-
-;; (setq mail-user-agent 'message-user-agent
-;;       user-mail-address "jpeschka@pdx.edu"
-;;       user-full-name "Jeremiah Peschka"
-;;       smtpmail-stream-type 'ssl
-;;       smtpmail-smtp-server "smtp.gmail.com"
-;;       smtpmail-smtp-service 465
-;;       smtpmail-debug-info t
-;;       message-send-mail-function 'message-smtpmail-send-it
-;;       message-default-mail-headers "Cc: \nBcc: \n"
-;;       message-auto-save-directory "~/.mail/pdx/draft"
-;;       message-kill-buffer-on-exit t
-;;       message-directory "~/.mail")
-
-;; (defun notmuch-exec-offlineimap ()
-;;     "execute offlineimap"
-;;     (interactive)
-;;     (set-process-sentinel
-;;      (start-process-shell-command "offlineimap"
-;;                                   "*offlineimap*"
-;;                                   "offlineimap -o")
-;;      '(lambda (process event)
-;;         (notmuch-refresh-all-buffers)
-;;         (let ((w (get-buffer-window "*offlineimap*")))
-;;           (when w
-;;             (with-selected-window w (recenter (window-end)))))))
-;; ;    (popwin:display-buffer "*offlineimap*")
-;;     )
-
-;; (add-to-list 'popwin:special-display-config
-;;              '("*offlineimap*" :dedicated t :position bottom :stick t
-;;                :height 0.4 :noselect t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; configuration for spaceline + spaceline-all-the-icons
@@ -498,6 +598,12 @@
   :ensure t)
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Writing tools
+(use-package writegood-mode
+  :ensure t
+  :config (add-hook 'text-mode-hook 'writegood-mode))
+
 (use-package langtool
   :ensure t
   :config
@@ -524,17 +630,9 @@
 (blackout 'auto-revert-mode)
 
 
+
+;; TODO: Remove this, it should be the user's choice if emacs is a daemon or not
 (server-start)
-(when (string-equal system-type "darwin")
-  (mac-pseudo-daemon-mode)
-  ;; (defun jp/save-buffers-kill-emacs ()
-  ;;   (interactive)
-  ;;   (if (not (eq mac-pseudo-daemon-mode 'nil))
-  ;;       (mac-pseudo-daemon-mode))
-  ;;   (save-buffers-kill-emacs))
-  ;; (global-unset-key (kbd "C-x C-c"))
-  ;; (global-set-key (kbd "C-x C-c") 'jp/save-buffers-kill-emacs)
-  )
 
 
 
