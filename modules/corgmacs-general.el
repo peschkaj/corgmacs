@@ -554,7 +554,8 @@ _t_: toggle    _._: toggle hydra _H_: help       C-o other win no-select
 (global-unset-key (kbd "s-q"))
 (global-unset-key (kbd "s-M-q"))
 
-(define-key global-map (kbd "C-^") 'top-join-line)
+(define-key global-map (kbd "C-^")   'join-line)
+(define-key global-map (kbd "C-M-^") 'top-join-line)
 (define-key global-map (kbd "C-x j") 'delete-indentation)
 
 
