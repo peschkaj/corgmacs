@@ -1,0 +1,26 @@
+#+AUTHOR: Jeremiah Peschka
+#+EMAIL: jeremiah.peschka@gmail.com
+#+TITLE: corgmacs README
+#+STARTUP: indent showall
+#+OPTIONS: tags:nil
+
+* What is this?
+
+This is my (Jeremiah Peschka) emacs configuration. It's loosely based on other
+configurations that I have found delightful and clear, but not suited to my use
+for one reason or another. 
+
+* Why "corgmacs"?
+
+I have a corgi. He's rad.
+
+I also have another dog who is also rad. However he is of no discernable breed.
+
+* How should you install this?
+
+You probably shouldn't. But if you want to give it a shot, you can:
+
+#+begin_src shell
+mv ~/.emacs.d ~/.emacs.d.old
+git clone git@github.com:peschkaj/corgmacs.git ~/.emacs.d
+#+end_src
