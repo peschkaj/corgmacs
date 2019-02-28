@@ -31,8 +31,13 @@
 ;;
 ;; Can be overridden in ~/.emacs-custom.el
 (if (not (boundp 'corgmacs/notifier-path))
-    (setq corgmacs/notifier-path "/usr/bin/dunst"))
+    (setq corgmacs/notifier-path "/usr/bin/notify-send"))
 
+(defun corgmacs/appt-send-notification (title msg)
+  (shell-command (concat corgmacs/notifier-path
+			 " -a emacs "
+			 " " title
+			 " " msg)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard Changes

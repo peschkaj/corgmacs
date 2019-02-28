@@ -214,18 +214,13 @@
     (run-at-time "24:01" 3600 'org-agenda-to-appt)           ;; update appt list hourly
     (add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt) ;; update appt list on agenda view
 
-    ;; set up the call to terminal-notifier
-    ;; TODO move to platform specific config file
-
-    (defun my-appt-send-notification (title msg)
-      (shell-command (concat my-notifier-path " -message " msg " -title " title " -sender org.gnu.Emacs ")))
 
     ;; designate the window function for my-appt-send-notification
-    (defun my-appt-display (min-to-app new-time msg)
-      (my-appt-send-notification
+    (defun corgmacs/appt-display (min-to-app new-time msg)
+      (corgmacs/appt-send-notification
        (format "'Appointment in %s minutes'" min-to-app)    ;; passed to -title in terminal-notifier call
        (format "'%s'" msg)))                                ;; passed to -message in terminal-notifier call
-    (setq appt-disp-window-function (function my-appt-display))
+    (setq appt-disp-window-function (function corgmacs/appt-display))
 
     ;; t - Prompt for a title and then add to index.org unless you refile it
     (setq org-capture-templates

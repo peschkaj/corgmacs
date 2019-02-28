@@ -34,6 +34,9 @@
 (if (not (boundp 'corgmacs/notifier-path))
     (setq corgmacs/notifier-path "/usr/local/bin/terminal-notifier"))
 
+(defun corgmacs/appt-send-notification (title msg)
+  (shell-command (concat corgmacs/notifier-path " -message " msg " -title " title " -sender org.gnu.Emacs ")))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font ligatures

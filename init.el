@@ -128,7 +128,7 @@
   :init (setq tramp-ssh-controlmaster-options nil))
 
 (defvar corgmacs/notifier-path
-  "/usr/bin/dunst"
+  "/usr/bin/notify-send"
   "Notifier program. Can be overriden via ~/.emacs-custom.el")
 
 ;; TODO probably need to load0file
