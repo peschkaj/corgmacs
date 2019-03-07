@@ -23,6 +23,11 @@
 ;;; Code goes here, moron.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; no menu-bar
+(if (eq (boundp 'menu-bar-mode) t)
+    (menu-bar-mode -1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font tweaks
 (set-default-font "PragmataPro 12" t t)
 

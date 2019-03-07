@@ -61,3 +61,6 @@ var/
 org-gcal/
 request/
 corgmacs-custom.el
+
+# some files or something
+transient/

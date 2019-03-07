@@ -23,6 +23,14 @@
 ;;; Code goes here, moron.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; I need a menu-bar on macOS
+;;
+;; If macOS does not have a menu-bar, then the window will not focus
+;; automatically on switching desktops
+(if (not (eq (boundp 'menu-bar-mode) t))
+    (menu-bar-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font tweaks
 (set-frame-font "PragmataPro Liga 16" t t)
 

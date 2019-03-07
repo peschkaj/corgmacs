@@ -40,9 +40,7 @@
      (tool-bar-mode   -1)
      (scroll-bar-mode -1)))
 
-;; no menu-bar
-(if (eq (boundp 'menu-bar-mode) t)
-    (menu-bar-mode -1))
+
 
 ;; replace yes/no questions with y/n
 (fset 'yes-or-no-p 'y-or-n-p)
