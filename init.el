@@ -44,8 +44,11 @@
 ;;
 ;; Having our own custom file means emacs doesn't poop all over this file and
 ;; constantly generate false changes for version control.
-(setq custom-file "~/.emacs-custom.el")
+                                        ;(setq custom-file "~/.emacs-custom.el")
+(setq custom-file "/dev/null")
 (load custom-file 'noerror)
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; benchmark-init
@@ -117,6 +120,12 @@
 ;; Individual modules are stored in a `modules` subdirectory of .emacs.d; it's
 ;; necessary to add these modules explicitly to the load-path.
 (add-to-list 'load-path (concat corgmacs/dotfiles-dir "modules"))
+
+;; TODO add check that this file exists
+(let ((corgmacs/local-customizations
+      (expand-file-name "corgmacs-custom.el" corgmacs/dotfiles-dir)))
+  (if (file-readable-p corgmacs/local-customizations)
+      (load-file corgmacs/local-customizations)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tramp settings

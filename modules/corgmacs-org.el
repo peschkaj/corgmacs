@@ -66,6 +66,11 @@
   ;:defer 1
   :ensure org-plus-contrib
   :config
+  ;; Set the top-level org directory
+  (setq org-directory (concat corgmacs/docs "org/"))
+  ;; If a custom set of agenda files is supplied, use them.
+  (if (fboundp 'corgmacs/set-org-agenda-files)
+      (corgmacs/set-org-agenda-files))
   (setq split-height-threshold nil
         org-export-with-smart-quotes t)
   (progn
@@ -97,7 +102,6 @@
           fill-column 80)
 
     ;; set default directories
-    (setq org-directory (concat corgmacs/docs "org/"))
     (setq corgmacs/org-inbox-file (concat org-directory "inbox.org"))
     (setq org-default-notes-file corgmacs/org-inbox-file)
 
@@ -167,15 +171,7 @@
           org-reverse-note-order t
           ;; diary is a 0 length file to keep emacs happy
           diary-file "~/Documents/org/diary"
-          org-agenda-files (list
-                             (concat org-directory "agenda.org")                          ;; Some kind of actual agenda
-                             (concat org-directory "inbox.org")                           ;; A dumping ground
-                             (concat org-directory "index.org")                           ;; The larger org-mode project list and general purpose index
-                             (concat org-directory "geu.org")                             ;; agitating for labor
-                             (concat org-directory "333.org")                             ;; CS333 - fun for you, fun for me
-                             (concat org-directory "calsync/jeremiahpeschka-cal.org")
-                             (concat org-directory "calsync/legitbiz-cal.org")
-                             (concat org-directory "calsync/jpeschka-cal.org"))
+
           org-agenda-skip-scheduled-if-done t
           org-agenda-skip-deadline-if-done t
           org-agenda-ndays 7

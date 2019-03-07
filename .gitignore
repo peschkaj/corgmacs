@@ -56,3 +56,8 @@ tmp/
 var/
 
 .cache/
+
+# calendar sync stuff
+org-gcal/
+request/
+corgmacs-custom.el
