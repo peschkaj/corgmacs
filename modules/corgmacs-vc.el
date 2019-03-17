@@ -69,7 +69,8 @@
   ;; Allow pulling with --rebase just once, without needing to
   ;; configure pull.rebase permanently. See
   ;; https://github.com/magit/magit/issues/2597#issuecomment-201392835.
-  (magit-define-popup-switch 'magit-pull-popup ?r "Rebase" "--rebase"))
+  ;;(magit-define-popup-switch 'magit-pull-popup ?r "Rebase" "--rebase")
+  )
 
 ;; Package `gh' provides an Elisp interface to the GitHub API.
 (use-package gh
@@ -81,13 +82,13 @@
 ;; Package `magit-gh-pulls' adds a section to Magit which displays
 ;; open pull requests on a corresponding GitHub repository, if any,
 ;; and allows you to check them out locally.
-(use-package magit-gh-pulls
-  :ensure t
-  :demand t
-  :after magit
-  :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
+;; (use-package magit-gh-pulls
+;;   :ensure t
+;;   :demand t
+;;   :after magit
+;;   :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
 
-  :blackout t)
+;;   :blackout t)
 
 ;; Package `git-commit' allows you to use Emacsclient as a Git commit
 ;; message editor, providing syntax highlighting and using
