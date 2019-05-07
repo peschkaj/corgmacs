@@ -131,10 +131,14 @@ provide such a commit message."
   ;; https://chris.beams.io/posts/git-commit/.
   (setq git-commit-summary-max-length 50))
 
-(when (memq window-system '(mac ns))
-  (use-package exec-path-from-shell
+(use-package exec-path-from-shell
     :ensure t
-    :config(exec-path-from-shell-initialize)))
+    :config(exec-path-from-shell-initialize))
+
+;; (when (memq window-system '(mac ns))
+;;   (use-package exec-path-from-shell
+;;     :ensure t
+;;     :config(exec-path-from-shell-initialize)))
 
 (when (window-system)
   ;; Disables pdf-tools using unicode symbols on the mode line

@@ -27,12 +27,15 @@
   :defer t
   :commands intero-mode)
 
+(require 'brittany)
+
 (use-package haskell-mode
   :ensure t
   :defer t
   :commands haskell-mode
   :config (progn
             (setq haskell-stylish-on-save t
+                  haskell-mode-stylish-haskell-path "brittany"
                   haskell-tags-on-save t
                   ;; Allow `haskell-mode' to use Stack with the global project instead
                   ;; of trying to invoke GHC directly, if not inside any sort of
@@ -44,8 +47,9 @@
                   haskell-process-args-cabal-repl '("--ghc-options=-ferror-spans -fshow-loaded-modules")
                   haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans -fshow-loaded-modules" "--no-build" "--no-load")
                   haskell-process-args-cabal-new-repl '("--ghc-options=-ferror-spans -fshow-loaded-modules"))
-            ;; Sets up haskell-mode to use interl for completion
+            ;; Sets up haskell-mode to use intero for completion
             (add-hook 'haskell-mode-hook 'intero-mode)
+            (add-hook 'haskell-mode-hook 'brittany-mode)
             (add-hook 'haskell-mode-hook #'smartparens-mode)
             ;; Enable REPL integration
             (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
@@ -56,7 +60,8 @@
             (define-key haskell-mode-map (kbd "C-c h i f") 'haskell-mode-format-imports)
             (define-key haskell-mode-map (kbd "C-c h i s") 'haskell-sort-imports)
             (define-key haskell-mode-map (kbd "C-c h i a") 'haskell-align-imports)
-            (define-key haskell-mode-map (kbd "C-c h s b") 'haskell-mode-stylish-buffer)))
+            (define-key haskell-mode-map (kbd "C-c h s b") 'haskell-mode-stylish-buffer))
+  :bind (("<Tab>" . brittany-reformat-region)))
 
 (use-package company-ghci
   :ensure t
