@@ -29,7 +29,6 @@
 ;; Set up list of package repositories
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
-                         ("melpa-stable" . "http://stable.melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 
 ;; avoid problems with files newer than their byte-compiled
@@ -485,7 +484,7 @@
 ;; configuration for spaceline + spaceline-all-the-icons
 (use-package all-the-icons
   :ensure t
-  :pin melpa-stable)
+  )
 
 (use-package nyan-mode
   :ensure t
@@ -500,12 +499,8 @@
   :ensure t
   :config (fancy-battery-mode))
 
-;; Both spaceline and spaceline-all-the-icons are pinned to melpa-stable
-;; this is because of this bug https://github.com/domtronn/spaceline-all-the-icons.el/issues/100
-;; and the fix was found via https://github.com/flamingbear/emacs-config/commit/6594677de383d742acaccc293a260b9adff7e4cc
 (use-package spaceline
-  :ensure t
-  :pin melpa-stable)
+  :ensure t)
 
 (use-package spaceline-config
   :ensure spaceline
@@ -516,7 +511,6 @@
 (use-package spaceline-all-the-icons
   :ensure t
   :after spaceline
-  :pin melpa-stable
   :config
 
   (setq spaceline-all-the-icons-separator-type 'none)
@@ -527,7 +521,7 @@
   (spaceline-toggle-all-the-icons-vc-status-on)
   (spaceline-toggle-all-the-icons-text-scale-on)
   ;; p sure that the time is leading to more power draw
-  (spaceline-toggle-all-the-icons-time-off)
+  ;(spaceline-toggle-all-the-icons-time-off)
   ;; git-ahead is currently disabled because it starts spamming messages that
   ;; 'Buffer " *temp*" has a running processes' but nobody actually cares.
   ;; (spaceline-all-the-icons--setup-git-ahead)

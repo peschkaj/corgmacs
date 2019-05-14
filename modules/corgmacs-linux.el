@@ -30,6 +30,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font tweaks
 (set-default-font "PragmataPro 12" t t)
+;; Remind emacs about frame level details when running as a daemon
+(setq default-frame-alist '((font . "PragmataPro 12")
+                            (tool-bar-lines . 0)
+                            (scroll-bar-lines . 0)
+                            (vertical-scroll-bars . nil)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Notifications
@@ -40,9 +46,9 @@
 
 (defun corgmacs/appt-send-notification (title msg)
   (shell-command (concat corgmacs/notifier-path
-			 " -a emacs "
-			 " " title
-			 " " msg)))
+       " -a emacs "
+       " " title
+       " " msg)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard Changes
