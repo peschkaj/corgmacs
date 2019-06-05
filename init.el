@@ -455,8 +455,15 @@
 (when (display-graphic-p)
   (add-hook 'haskell-mode-hook #'fp-prettify-symbols)
   (add-hook 'prog-mode-hook #'add-pragmatapro-prettify-symbols-alist)
+  (add-hook 'c-mode-hook #'add-pragmatapro-prettify-symbols-alist)
   (toggle-frame-maximized)
   (global-prettify-symbols-mode +1))
+
+(add-hook 'haskell-mode-hook #'fp-prettify-symbols)
+(add-hook 'prog-mode-hook #'add-pragmatapro-prettify-symbols-alist)
+(add-hook 'c-mode-hook #'add-pragmatapro-prettify-symbols-alist)
+(toggle-frame-maximized)
+(global-prettify-symbols-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; markdown
@@ -514,12 +521,15 @@
   :config
 
   (setq spaceline-all-the-icons-separator-type 'none)
+  ;(setq spaceline-all-the-icons-separator-type 'arrow)
   (setq spaceline-all-the-icons-icon-set-modified 'circle)
 
   (spaceline-toggle-all-the-icons-vc-icon-on)
   (spaceline-toggle-all-the-icons-mode-icon-on)
   (spaceline-toggle-all-the-icons-vc-status-on)
   (spaceline-toggle-all-the-icons-text-scale-on)
+  ;; nyan takes care of this
+  (spaceline-toggle-all-the-icons-hud-off)
   ;; p sure that the time is leading to more power draw
   ;(spaceline-toggle-all-the-icons-time-off)
   ;; git-ahead is currently disabled because it starts spamming messages that
@@ -624,8 +634,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load theme as the very last activity
-(load-theme 'tangotango t)
-
+;(load-theme 'tangotango t)
+(load-theme 'srcery t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

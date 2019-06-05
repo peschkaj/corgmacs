@@ -67,8 +67,9 @@
   :ensure org-plus-contrib
   :config
   ;; Set the top-level org directory
-  (setq org-directory (expand-file-name "~/Dropbox/org/")                ;(concat corgmacs/docs "org/")
-        )
+  (setq org-directory (expand-file-name "~/Dropbox/org/"))
+  ;; Auto save org files
+  (add-hook 'auto-save-hook 'org-save-all-org-buffers)
   ;; If a custom set of agenda files is supplied, use them.
   (if (fboundp 'corgmacs/set-org-agenda-files)
       (corgmacs/set-org-agenda-files))
