@@ -58,6 +58,9 @@
   (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
                                             ("* ||\n[i]" "RET"))))
 
+;; stop smartparens from getting drunk and always escaping single quotes
+(setq sp-escape-quotes-after-insert nil)
+
 ;; By default, Emacs won't indent when press RET because the command bound to
 ;; RET is newline. You can enable automatic indentation by binding RET to
 ;; newline-and-indent.
