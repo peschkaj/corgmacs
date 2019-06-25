@@ -140,7 +140,7 @@ provide such a commit message."
 ;;     :ensure t
 ;;     :config(exec-path-from-shell-initialize)))
 
-(when (window-system)
+
   ;; Disables pdf-tools using unicode symbols on the mode line
   (setq pdf-view-use-unicode-ligther nil)
 
@@ -170,7 +170,7 @@ provide such a commit message."
                ("s"  . pdf-occur)
                ("b"  . pdf-view-set-slice-from-bounding-box)
                ("r"  . pdf-view-reset-slice))
-    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)))
+    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
 
 (provide 'corgmacs-vc)
