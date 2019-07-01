@@ -175,6 +175,7 @@
 (require 'corgmacs-code)
 (require 'corgmacs-lisp)
 (require 'corgmacs-cpp)
+(require 'corgmacs-fstar)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -635,7 +636,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load theme as the very last activity
 ;(load-theme 'tangotango t)
-(load-theme 'srcery t)
+;(load-theme 'srcery t)
+(load-theme 'flatland t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

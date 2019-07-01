@@ -154,7 +154,7 @@
 ;    (add-to-list 'org-latex-packages-alist '("" "xunicode"))
     ;; Tell the latex export to use the minted package for source
     ;; code coloration.
-    (setq org-latex-listings 'minted)
+    ;; (setq org-latex-listings 'minted)
     ;; Let the exporter use the -shell-escape option to let latex
     ;; execute external programs.
     ;; This obviously and can be dangerous to activate!
