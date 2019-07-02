@@ -24,10 +24,11 @@
 
 
 (use-package fstar-mode
+  :ensure t
   :config
   (setq-default fstar-executable "/home/jeremiah/src/fstarlang/FStar//bin/fstar.exe"
                 fstar-smt-executable "/usr/bin/z3")
   )
 
 (provide 'corgmacs-fstar)
-;;; corgmacs-org.el ends here
+;;; corgmacs-fstar.el ends here
