@@ -67,7 +67,7 @@
   :ensure org-plus-contrib
   :config
   ;; Set the top-level org directory
-  (setq org-directory (expand-file-name "~/Dropbox/org/"))
+  (setq org-directory (expand-file-name "~/org/"))
   ;; Auto save org files
   (add-hook 'auto-save-hook 'org-save-all-org-buffers)
   ;; If a custom set of agenda files is supplied, use them.
