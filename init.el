@@ -422,13 +422,6 @@
           )))
 
 
-(when (display-graphic-p)
-  (add-hook 'haskell-mode-hook  #'fp-prettify-symbols)
-  (add-hook 'prog-mode-hook     #'add-pragmatapro-prettify-symbols-alist)
-  (add-hook 'c-mode-hook        #'add-pragmatapro-prettify-symbols-alist)
-  (toggle-frame-maximized)
-  (global-prettify-symbols-mode +1))
-
 (add-hook 'haskell-mode-hook  #'fp-prettify-symbols)
 (add-hook 'prog-mode-hook     #'add-pragmatapro-prettify-symbols-alist)
 (add-hook 'c-mode-hook        #'add-pragmatapro-prettify-symbols-alist)
