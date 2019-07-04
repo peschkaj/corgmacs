@@ -26,6 +26,19 @@
 ;;; Code:
 ;;; Code goes here, moron.
 
+;; Make startup faster by reducing the frequency of garbage
+;; collection.  The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
+;; Use a hook so the message doesn't get clobbered by other messages.
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
 ;; Set up list of package repositories
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
@@ -554,8 +567,11 @@
 
 
 
-;; TODO: Remove this, it should be the user's choice if emacs is a daemon or not
+;; Start up a server for great fun
 (server-start)
+
+;; Revert to a more sane gc threshold to keep pauses as short as possible.
+(setq gc-cons-threshold (* 2 1000 1000))
 
 
 
