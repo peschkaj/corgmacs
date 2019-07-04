@@ -68,42 +68,11 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
-(unless (package-installed-p 'which-key)
-  (package-install 'which-key))
-
-(unless (package-installed-p 'exec-path-from-shell)
-  (package-install 'exec-path-from-shell))
-
-(unless (package-installed-p 'smartparens)
-  (package-install 'smartparens))
-
-(unless (package-installed-p 'paredit)
-  (package-install 'paredit))
-
-(unless (package-installed-p 'rainbow-delimiters)
-  (package-install 'rainbow-delimiters))
-
-(unless (package-installed-p 'hydra)
-  (package-install 'hydra))
-
-(unless (package-installed-p 'restart-emacs)
-  (package-install 'restart-emacs))
-
-(unless (package-installed-p 'helm)
-  (package-install 'helm))
-
-(unless (package-installed-p 'dash-functional)
-  (package-install 'dash-functional))
-
-(unless (package-installed-p 'markdown-mode)
-  (package-install 'markdown-mode))
-
-(unless (package-installed-p 'racket-mode)
-  (package-install 'racket-mode))
-
 (eval-when-compile
-  (require 'use-package)
-  (require 'ibuffer))
+  (require 'use-package))
+
+(use-package ibuffer
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set up loading from modules directory
