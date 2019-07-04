@@ -108,5 +108,11 @@ point reaches the beginning or end of the buffer, stop there."
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Whitespace cleanup on save
+(add-hook 'before-save-hook 'whitespace-cleanup)
+
+
+
 (provide 'corgmacs-editing)
 ;;; end of editing
