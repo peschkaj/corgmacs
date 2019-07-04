@@ -89,19 +89,26 @@
   (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
   (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
 
-(require 'cc-mode)
-(require 'semantic)
-
-(global-semanticdb-minor-mode 1)
+(use-package cc-mode)
+(use-package semantic
+  :ensure t
+  :after cc-mode
+  :config
+  (global-semanticdb-minor-mode 1)
 (global-semantic-idle-scheduler-mode 1)
 (global-semantic-idle-summary-mode 1)
-
 (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+(semantic-mode 1))
+
+
+
+
 
 (use-package stickyfunc-enhance
-  :ensure t)
+  :ensure t
+  :after semantic)
 
-(semantic-mode 1)
+
 
 
 (provide 'corgmacs-cpp)
