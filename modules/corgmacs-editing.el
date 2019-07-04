@@ -68,6 +68,7 @@
 ;; Rebind the undo and redo commands to undo tree
 (use-package undo-tree
   :ensure t
+  :defer 2
   :config
   (global-undo-tree-mode 1)
   (global-unset-key (kbd "C-/"))
