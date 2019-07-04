@@ -444,6 +444,7 @@
 ;; view usage with keyfreq-show
 (use-package keyfreq
   :ensure t
+  :defer 2
   :blackout t
   :config
   (keyfreq-mode 1)
@@ -509,6 +510,7 @@
 ;; multi-term
 (use-package multi-term
   :ensure t
+  :defer 3
   :config
   (add-hook 'term-mode-hook (lambda ()
                               (define-key term-raw-map (kbd "C-y") 'term-paste)))
@@ -520,10 +522,12 @@
 ;; Writing tools
 (use-package writegood-mode
   :ensure t
+  :defer 2
   :config (add-hook 'text-mode-hook 'writegood-mode))
 
 (use-package langtool
   :ensure t
+  :defer 2
   :config
   (progn (setq langtool-language-tool-server-jar "/usr/local/Cellar/languagetool/4.4/libexec/languagetool.jar"
                langtool-server-user-arguments '("-p" "8082")
