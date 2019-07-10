@@ -149,7 +149,7 @@
 (require 'corgmacs-lisp)
 (require 'corgmacs-cpp)
 (require 'corgmacs-fstar)
-(require 'fira-code-mode)
+(require 'corgmacs-linux-pragmata)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -206,7 +206,8 @@
   :config (fancy-battery-mode))
 
 (use-package spaceline
-  :ensure t)
+  :ensure t
+  :after all-the-icons)
 
 (use-package spaceline-config
   :ensure spaceline
