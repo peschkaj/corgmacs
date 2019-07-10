@@ -46,14 +46,25 @@
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (setq projectile-project-search-path '("~/src/peschkaj/"
                                          "~/src/"))
-  (projectile-global-mode))
+  (projectile-mode))
 
+
+(defun jp-eval-after-load-grep ()
+  "Get grep to ignore tags, build files, and the seL4 build directory."
+  (add-to-list 'grep-find-ignored-directories "build-ia32")
+  (add-to-list 'grep-find-ignored-files "tags")
+  (add-to-list 'grep-find-ignored-files "GTAGS")
+  (add-to-list 'grep-find-ignored-files "GRTAGS")
+  (add-to-list 'grep-find-ignored-files "*.ninja"))
 
 (use-package helm-projectile
   :ensure t
   :after helm
   :config
-  (helm-projectile-on))
+  (helm-projectile-on)
+  (eval-after-load "grep"
+    '(jp-eval-after-load-grep))
+  )
 
 
 
@@ -91,3 +102,4 @@
 
 
 (provide 'corgmacs-code)
+;;; corgmacs-code.el ends here
