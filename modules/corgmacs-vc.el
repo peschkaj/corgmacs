@@ -147,8 +147,8 @@ provide such a commit message."
   (use-package pdf-tools
     :ensure t
     :config
-    (pdf-tools-install)
-    (setq-default pdf-view-display-size 'fit-width)
+    (pdf-loader-install)
+    (setq-default pdf-view-display-size 'fit-page)
     (bind-keys :map pdf-view-mode-map
                ("\\" . hydra-pdftools/body)
                ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
