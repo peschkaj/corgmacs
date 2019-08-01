@@ -25,9 +25,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font tweaks
-(set-default-font "PragmataPro 12" t t)
+(set-frame-font "PragmataPro Mono Liga 12" t t)
 ;; Remind emacs about frame level details when running as a daemon
-(setq default-frame-alist '((font . "PragmataPro 12")
+(setq default-frame-alist '((font . "PragmataPro Mono Liga 12")
                             (tool-bar-lines . 0)
                             (scroll-bar-lines . 0)
                             (vertical-scroll-bars . nil)))
@@ -268,39 +268,13 @@
   (dolist (alias pragmatapro-prettify-symbols-alist)
     (push alias prettify-symbols-alist)))
 
-(defun fp-prettify-symbols ()
-  "Make the letters pretty!"
-  (mapc (lambda (pair) (push pair prettify-symbols-alist))
-        ;; Need a way to make this work with comments as well.
-        '(
-          ("\\" . ?λ)
-          ("*" . ?⋅)
-          ;; ("forall" . ?∀)
-          ;; ("forAll" . ?∀)
-          ;; ("all"    . ?∀)
-          ;; ("exists" . ?∃)
-          ;; ("undefined" . ?⊥)
-          ;; ("elem" . ?∈)
-          ;; ("flip elem" . ?∋)
-          ;; ("notElem" . ?∉)
-          ;; ("flip notElem" . ?∌)
-          ;; ("member" . ?∈)
-          ;; ("notMember" . ?∉)
-          ;; ("union" . ?⋃)
-          ;; ("intersection" . ?⋂)
-          ;; ("isSubsetOf" . ?⊆)
-          ;; ("isProperSubsetOf" . ?⊂)
-          (" . " . (? (Br . Bl) ?◦ (Br . Bl) ? ))
-          ;; ("/" . ?÷)
-          ;; ("div" . ?÷)
-          ;; ("quot" . ?÷)
-          )))
+(add-hook 'prog-mode-hook
+          #'add-pragmatapro-prettify-symbols-alist)
 
+(defun refresh-pretty ()
+  (prettify-symbols-mode -1)
+  (prettify-symbols-mode +1))
 
-(add-hook 'haskell-mode-hook  #'fp-prettify-symbols)
-(add-hook 'prog-mode-hook     #'add-pragmatapro-prettify-symbols-alist)
-(add-hook 'c-mode-hook        #'add-pragmatapro-prettify-symbols-alist)
-(toggle-frame-maximized)
 (global-prettify-symbols-mode +1)
 
 (provide 'corgmacs-linux-pragmata)

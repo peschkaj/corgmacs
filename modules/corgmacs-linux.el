@@ -29,7 +29,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font tweaks
-(set-default-font "PragmataPro 12" t t)
+;(set-default-font "PragmataPro 12" t t)
 ;; Remind emacs about frame level details when running as a daemon
 (setq default-frame-alist '((font . "PragmataPro 12")
                             (tool-bar-lines . 0)

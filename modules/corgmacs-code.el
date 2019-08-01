@@ -49,7 +49,7 @@
   (projectile-mode))
 
 
-(defun jp-eval-after-load-grep ()
+(defun corgmacs/eval-after-load-grep ()
   "Get grep to ignore tags, build files, and the seL4 build directory."
   (add-to-list 'grep-find-ignored-directories "build-ia32")
   (add-to-list 'grep-find-ignored-files "tags")
@@ -63,7 +63,7 @@
   :config
   (helm-projectile-on)
   (eval-after-load "grep"
-    '(jp-eval-after-load-grep))
+    '(corgmacs/eval-after-load-grep))
   )
 
 

@@ -149,7 +149,6 @@
 (require 'corgmacs-lisp)
 (require 'corgmacs-cpp)
 (require 'corgmacs-fstar)
-(require 'corgmacs-linux-pragmata)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LLVM tools
@@ -166,7 +165,8 @@
 (require 'corgmacs-org)
 
 
-
+;(require 'fira-code-mode)
+(require 'corgmacs-linux-pragmata)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
