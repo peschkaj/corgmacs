@@ -369,14 +369,14 @@ backends will still be included.")
 ;; Trigger with 'M-o w'
 (defhydra hydra-window ()
       "
-Movement^^	^Split^		^Switch^		^Resize^
+Movement^^  ^Split^         ^Switch^      ^Resize^
 ----------------------------------------------------------------
-_h_ ←      _v_ertical      _b_uffer      _q_ X←
+_h_ ←       _v_ertical      _b_uffer      _q_ X←
 _j_ ↓       _x_ horizontal  _f_ind files  _w_ X↓
 _k_ ↑       _z_ undo        _a_ce 1       _e_ X↑
-_l_ →      _Z_ reset       _s_wap        _r_ X→
+_l_ →       _Z_ reset       _s_wap        _r_ X→
 _F_ollow    _D_lt Other     _S_ave        max_i_mize
-_SPC_ cancel                _o_nly this   _d_elete
+_SPC_ cancel              _o_nly this   _d_elete
 "
   ("h" windmove-left )
   ("j" windmove-down )
