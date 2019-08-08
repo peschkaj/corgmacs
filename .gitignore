@@ -2,6 +2,7 @@
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
+
 *~
 \#*\#
 /.emacs.desktop
@@ -47,6 +48,8 @@ flycheck_*.el
 # directory configuration
 .dir-locals.el
 
+# LSP-mode
+.lsp-session-*
 
 # End of https://www.gitignore.io/api/emacs
 
