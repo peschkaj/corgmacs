@@ -70,16 +70,23 @@
 ;; lsp-mode for C/C++
 (use-package lsp-mode
   :ensure t
+  :after helm
   :hook (c-mode . lsp)
   :commands (lsp lsp-deferred))
 
 ;; optionally
 (use-package lsp-ui
-  :commands lsp-ui-mode)
+  :after lsp-mode
+  :commands lsp-ui-mode
+  :config (progn (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+                 (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)))
 (use-package company-lsp
   :commands company-lsp)
 (use-package helm-lsp
-  :commands helm-lsp-workspace-symbol)
+  :after lsp-mode
+  :commands helm-lsp-workspace-symbol
+  :config (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
+(add-hook 'lsp-mode-hook 'lsp-ui-mode)
 ;; We don't currently use treemacs
 ;; (use-package lsp-treemacs
 ;;   :commands lsp-treemacs-errors-list)
@@ -87,9 +94,46 @@
 ;;(use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
+(setq helm-gtags-ignore-case t
+      helm-gtags-auto-update t
+      helm-gtags-use-input-at-cursor t
+      helm-gtags-pulse-at-cursor t
+      helm-gtags-prefix-key "\C-cg"
+      helm-gtags-suggested-key-mapping t)
+
+(use-package helm-gtags
+  :ensure t
+  :config
+  (add-hook 'dired-mode-hook 'helm-gtags-mode)
+  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+  (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+  (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+  (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+  (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+  (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+  (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
+
+
+
 (use-package cc-mode)
 
+(use-package semantic
+  :ensure t
+  :after cc-mode
+  :config
+  (global-semanticdb-minor-mode 1)
+  (global-semantic-idle-scheduler-mode 1)
+  (global-semantic-idle-summary-mode 1)
+  (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+  (semantic-mode 1))
 
+(use-package stickyfunc-enhance
+  :ensure t
+  :after semantic)
 
 
 

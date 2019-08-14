@@ -288,7 +288,8 @@
 ;; Load theme as the very last activity
 ;(load-theme 'tangotango t)
 ;(load-theme 'srcery t)
-(load-theme 'flatland t)
+;(load-theme 'flatland t)
+(load-theme 'zerodark t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
