@@ -77,13 +77,17 @@
 ;; optionally
 (use-package lsp-ui
   :after lsp-mode
+  :ensure t
   :commands lsp-ui-mode
   :config (progn (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
                  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)))
 (use-package company-lsp
-  :commands company-lsp)
+  :commands company-lsp
+  :ensure t
+  :after company-mode)
 (use-package helm-lsp
   :after lsp-mode
+  :ensure t
   :commands helm-lsp-workspace-symbol
   :config (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)

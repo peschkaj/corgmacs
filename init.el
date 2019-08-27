@@ -56,8 +56,7 @@
 ;;
 ;; Having our own custom file means emacs doesn't poop all over this file and
 ;; constantly generate false changes for version control.
-                                        ;(setq custom-file "~/.emacs-custom.el")
-(setq custom-file "/dev/null")
+(setq custom-file "~/.emacs-custom.el")
 (load custom-file 'noerror)
 
 
@@ -198,18 +197,19 @@
   :ensure t
   )
 
-(use-package nyan-mode
-  :ensure t
-  :config (nyan-mode))
+;; (use-package nyan-mode
+;;   :ensure t
+;;   :config (nyan-mode))
 
 (use-package git-gutter
   :ensure t
+  :defer 1
   :config
   (add-hook 'prog-mode-hook #'git-gutter-mode))
 
-(use-package fancy-battery
-  :ensure t
-  :config (fancy-battery-mode))
+;; (use-package fancy-battery
+;;   :ensure t
+;;   :config (fancy-battery-mode))
 
 (use-package spaceline
   :ensure t
@@ -235,9 +235,9 @@
   (spaceline-toggle-all-the-icons-vc-status-on)
   (spaceline-toggle-all-the-icons-text-scale-on)
   ;; nyan takes care of this
-  (spaceline-toggle-all-the-icons-hud-off)
+  (spaceline-toggle-all-the-icons-hud-on)
   ;; p sure that the time is leading to more power draw
-  ;(spaceline-toggle-all-the-icons-time-off)
+  (spaceline-toggle-all-the-icons-time-off)
   ;; git-ahead is currently disabled because it starts spamming messages that
   ;; 'Buffer " *temp*" has a running processes' but nobody actually cares.
   ;; (spaceline-all-the-icons--setup-git-ahead)
@@ -286,10 +286,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load theme as the very last activity
-;(load-theme 'tangotango t)
-;(load-theme 'srcery t)
-;(load-theme 'flatland t)
-(load-theme 'zerodark t)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

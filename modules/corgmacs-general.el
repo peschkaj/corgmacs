@@ -61,7 +61,7 @@
 (setq-default delete-by-moving-to-trash t)
 
 ;; Revert (update) buffers automatically when underlying files are changed externally.
-(global-auto-revert-mode t)
+;(global-auto-revert-mode t)
 
 ;; make sure that UTF-8 is used everywhere.
 (setq utf-translate-cjk-mode nil)    ; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
