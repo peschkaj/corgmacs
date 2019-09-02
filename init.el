@@ -152,7 +152,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LLVM tools
 (setq load-path
-    (cons (expand-file-name "/usr/share/emacs/site-lisp/emacs-llvm-mode") load-path))
+      (cons (expand-file-name "/usr/share/emacs/site-lisp/llvm-8")
+            (cons (expand-file-name "/usr/share/emacs/site-lisp/emacs-llvm-mode") load-path)))
 (require 'llvm-mode)
 
 
