@@ -215,7 +215,7 @@
             (">="        #XEA21)
             (">>"        #XEA22)
             (">>-"       #XEA23)
-            (">=="       #XEA24)
+            (">>="       #XEA24)
             (">>>"       #XEA25)
             (">=>"       #XEA26)
             (">>^"       #XEA27)
@@ -268,6 +268,7 @@
   (dolist (alias pragmatapro-prettify-symbols-alist)
     (push alias prettify-symbols-alist)))
 
+(remove-hook 'prog-mode-hook #'add-iosevka-prettify-symbols-alist)
 (add-hook 'prog-mode-hook
           #'add-pragmatapro-prettify-symbols-alist)
 
