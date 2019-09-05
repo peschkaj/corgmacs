@@ -166,8 +166,8 @@
 
 
 ;(require 'fira-code-mode)
-(require 'corgmacs-linux-pragmata)
-;(require 'corgmacs-linux-iosevka)
+;(require 'corgmacs-linux-pragmata)
+(require 'corgmacs-linux-iosevka)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
