@@ -101,5 +101,10 @@
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rust
+(use-package rust-mode
+  :ensure t)
+
 (provide 'corgmacs-code)
 ;;; corgmacs-code.el ends here
