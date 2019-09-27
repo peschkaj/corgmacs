@@ -22,10 +22,10 @@
 ;;; Code:
 ;;; Code goes here, moron.
 
-(use-package intero
-  :ensure t
-  :defer t
-  :commands intero-mode)
+;; (use-package intero
+;;   :ensure t
+;;   :defer t
+;;   :commands intero-mode)
 
 (require 'brittany)
 
@@ -48,7 +48,7 @@
                   haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans -fshow-loaded-modules" "--no-build" "--no-load")
                   haskell-process-args-cabal-new-repl '("--ghc-options=-ferror-spans -fshow-loaded-modules"))
             ;; Sets up haskell-mode to use intero for completion
-            (add-hook 'haskell-mode-hook 'intero-mode)
+            ;; (add-hook 'haskell-mode-hook 'intero-mode)
             (add-hook 'haskell-mode-hook 'brittany-mode)
             (add-hook 'haskell-mode-hook #'smartparens-mode)
             ;; Enable REPL integration
@@ -63,25 +63,32 @@
             (define-key haskell-mode-map (kbd "C-c h s b") 'haskell-mode-stylish-buffer))
   :bind (("<Tab>" . brittany-reformat-region)))
 
-(use-package company-ghci
-  :ensure t
-  :defer t)
+;; (use-package company-ghci
+;;   :ensure t
+;;   :defer t)
 
 (use-package helm-hoogle
   :ensure t
   :defer t)
 
-(use-package hindent
-  :ensure t
-  :defer t
-  :init (add-hook 'haskell-mode-hook #'hindent-mode)
-  :bind (("C-c h ")))
+;; (use-package hindent
+;;   :ensure t
+;;   :defer t
+;;   :init (add-hook 'haskell-mode-hook #'hindent-mode)
+;;   :bind (("C-c h ")))
 
-(use-package hlint-refactor
+;; (use-package hlint-refactor
+;;   :ensure t
+;;   :defer t
+;;   :bind (("C-c h r b" . hlint-refactor-refactor-buffer)
+;;          ("C-c h r r" . hlint-refactor-refactor-at-point)))
+(use-package lsp-haskell
   :ensure t
-  :defer t
-  :bind (("C-c h r b" . hlint-refactor-refactor-buffer)
-         ("C-c h r r" . hlint-refactor-refactor-at-point)))
+  :config
+  (add-hook 'haskell-mode-hook #'lsp-deferred)
+  (lsp-haskell-set-hlint-on)
+  (lsp-haskell-set-liquid-off)
+  (lsp-haskell-set-completion-snippets-on))
 
 (provide 'corgmacs-haskell)
 ;;; haskell.el ends here

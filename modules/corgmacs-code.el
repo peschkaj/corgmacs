@@ -102,9 +102,17 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Rust
+;; Rust mode
+(setq-default lsp-rust-rls-command '("rls"))
 (use-package rust-mode
-  :ensure t)
+  :ensure t
+  :after helm
+  :hook (rust-mode . lsp)
+  :commands (lsp lsp-deferred)
+  :config (add-hook #'rust-mode-hook #'lsp)
+  (add-hook #'rust-mode-hook #'(lambda () (add-to-list 'flycheck-disabled-checkers 'rust-cargo)))
+  (add-hook 'rust-mode-hook #'company-mode))
+
 
 (provide 'corgmacs-code)
 ;;; corgmacs-code.el ends here
