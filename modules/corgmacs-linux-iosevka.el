@@ -25,9 +25,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font tweaks
                                         ;(set-frame-font "Iosevka Haskell 12" t t)
-(set-fontset-font t '(#xe100 . #xe16f) "Iosevka Haskell")
+(set-fontset-font t '(#xe100 . #xe16f) "Iosevka")
 ;; Remind emacs about frame level details when running as a daemon
-(setq default-frame-alist '((font . "Iosevka Haskell 12")
+(setq default-frame-alist '((font . "Iosevka 12")
                             (tool-bar-lines . 0)
                             (scroll-bar-lines . 0)
                             (vertical-scroll-bars . nil)))
