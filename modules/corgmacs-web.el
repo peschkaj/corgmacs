@@ -43,5 +43,11 @@
   (js2r-add-keybindings-with-prefix "C-c C-r")
   (define-key js2-mode-map (kbd "C-k") #'js2r-kill))
 
+(use-package eslint-fix
+  :ensure t
+  :config
+  (eval-after-load 'js2-mode
+     '(add-hook 'js2-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t)))))
+
 (provide 'corgmacs-web)
 ;;; corgmacs-web.el ends here
