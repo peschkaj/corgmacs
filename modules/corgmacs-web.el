@@ -32,7 +32,7 @@
 (use-package js2-mode
   :ensure t
   :config
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (add-to-list 'auto-mode-alist '("\\.\\(js\\|es6\\)\\(\\.erb\\)?\\'" . js2-mode))
   (add-hook 'js2-mode-hook #'js2-imenu-extras-mode))
 
 (use-package js2-refactor
@@ -41,13 +41,20 @@
   :config
   (add-hook 'js2-mode-hook #'js2-refactor-mode)
   (js2r-add-keybindings-with-prefix "C-c C-r")
-  (define-key js2-mode-map (kbd "C-k") #'js2r-kill))
+  (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+  (setq-default js-indent-level 2))
 
 (use-package eslint-fix
   :ensure t
   :config
   (eval-after-load 'js2-mode
-     '(add-hook 'js2-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t)))))
+    '(add-hook 'js2-mode-hook (lambda () (add-hook 'after-save-hook 'eslint-fix nil t)))))
+
+(use-package json-mode
+  :ensure t)
+
+(use-package prettier-js
+  :ensure t)
 
 (provide 'corgmacs-web)
 ;;; corgmacs-web.el ends here

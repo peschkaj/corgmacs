@@ -36,6 +36,24 @@
 (setq flymake-run-in-place nil)
 
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; gitignore mode
+(use-package gitignore-mode
+  :ensure t)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; emmett
+(use-package emmet-mode
+  :ensure t
+  :config
+  (add-hook 'css-mode-hook  'emmet-mode)
+  (add-hook 'html-mode-hook 'emmet-mode)
+  (add-hook 'js2-mode-hook  'emmet-mode))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; projectile
 (use-package projectile
