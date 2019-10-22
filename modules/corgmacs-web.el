@@ -27,6 +27,12 @@
 (use-package rainbow-mode
   :ensure t)
 
+(use-package css-eldoc
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'css-mode-hook 'turn-on-css-eldoc))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; JavaScript
 (use-package js2-mode
@@ -55,6 +61,32 @@
 
 (use-package prettier-js
   :ensure t)
+
+(use-package simple-httpd
+  :ensure t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Live preview of web pages
+;;
+;; See https://github.com/skeeto/skewer-mode for keybinds
+(use-package skewer-mode
+  :ensure t)
+
+(add-hook 'css-mode-hook 'skewer-css-mode)
+(add-hook 'js2-mode-hook 'skewer-mode)
+(add-hook 'html-mode-hook 'skewer-html-mode)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Browse current HTML file
+(defun browse-current-file ()
+  "Open the current file as a URL using `browse-url'."
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (if (and (fboundp 'tramp-tramp-file-p)
+             (tramp-tramp-file-p file-name))
+        (error "Cannot open tramp file")
+      (browse-url (concat "file://" file-name)))))
 
 (provide 'corgmacs-web)
 ;;; corgmacs-web.el ends here
