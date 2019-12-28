@@ -12,9 +12,7 @@ for one reason or another.
 
 * Why "corgmacs"?
 
-I have a corgi. He's rad.
-
-I also have another dog who is also rad. However he is of no discernable breed.
+I have two corgis, they are rad.
 
 * How should you install this?
 
