@@ -38,7 +38,8 @@
 (if (display-graphic-p)
     (progn
      (tool-bar-mode   -1)
-     (scroll-bar-mode -1)))
+     (scroll-bar-mode -1)
+     (menu-bar-mode   -1)))
 
 
 
@@ -95,7 +96,7 @@
   (make-directory corgmacs/emacs-temp-directory))
 
 ;; Change the autosave location
-(defvar corgmacs/emacs-autosave-directory (concat user-emacs-directory "auto-save/"))
+(defvar corgmacs/emacs-autosave-directory (concat corgmacs/emacs-temp-directory "auto-save/"))
 (unless (file-exists-p corgmacs/emacs-autosave-directory)
   (make-directory corgmacs/emacs-autosave-directory))
 (setq backup-directory-alist `(("." . ,corgmacs/emacs-autosave-directory)))
@@ -170,8 +171,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Blackout - control the mode line
 ;; TODO: need a better way to force this...
-(add-to-list 'load-path "~/src/blackout")
-(use-package blackout)
+(use-package blackout
+  :ensure t)
+
+
 
 
 

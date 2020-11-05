@@ -25,7 +25,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font tweaks
-(set-default-font "Fira Code 12" t t)
+(set-fontset-font t '(#xe100 . #xe16f) "Fira Code")
 ;; Remind emacs about frame level details when running as a daemon
 (setq default-frame-alist '((font . "Fira Code 12")
                             (tool-bar-lines . 0)
