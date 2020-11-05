@@ -71,7 +71,8 @@
 (setq locale-coding-system   'utf-8)
 (prefer-coding-system        'utf-8)
 (set-selection-coding-system
- (if (eq system-type 'windows-nt)
+ (if (or (eq system-type 'windows-nt)
+         (eq system-type 'w32))
      'utf-16-le  ;; https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows
    'utf-8))
 (set-input-method nil)

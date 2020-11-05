@@ -121,12 +121,13 @@
   "Notifier program. Can be overriden via ~/.emacs-custom.el")
 
 (let ((corgmacs/os-customizations
-       (cond ((eq system-type 'windows-nt)
+       (cond ((or (eq system-type 'windows-nt)
+                  (eq system-type 'w32))
               (expand-file-name "cormacs-windows.el" (concat corgmacs/dotfiles-dir "modules")))
              ((eq system-type 'darwin)
               (expand-file-name "corgmacs-macos.el" (concat corgmacs/dotfiles-dir "modules")))
              (t (expand-file-name "corgmacs-linux.el" (concat corgmacs/dotfiles-dir "modules")))
-         )))
+             )))
   (if (file-readable-p corgmacs/os-customizations)
       (load-file corgmacs/os-customizations)))
 
@@ -151,23 +152,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LLVM tools
-(setq load-path
-      (cons (expand-file-name "/usr/share/emacs/site-lisp/llvm-8")
-            (cons (expand-file-name "/usr/share/emacs/site-lisp/emacs-llvm-mode") load-path)))
-(require 'llvm-mode)
+(if (or (not (eq system-type 'windows-nt))
+        (not (eq system-type 'w32)))
+    (setq load-path
+          (cons (expand-file-name "/usr/share/emacs/site-lisp/llvm-8")
+                (cons (expand-file-name "/usr/share/emacs/site-lisp/emacs-llvm-mode") load-path)))
+  (require 'llvm-mode))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; haskell
-(require 'corgmacs-haskell)
+;; (require 'corgmacs-haskell)
 
 
 (require 'corgmacs-org)
 
 
-;(require 'fira-code-mode)
-;(require 'corgmacs-linux-pragmata)
-(require 'corgmacs-linux-iosevka)
+(use-package unicode-fonts
+  :ensure t
+  :config
+  (unicode-fonts-setup))
+
+
+(cond ((or (eq system-type 'windows-nt)
+           (eq system-type 'w32))
+       (require 'cascadia-code-mode))
+      (t (require 'corgmacs-linux-iosevka)))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -252,13 +263,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; multi-term
-(use-package multi-term
-  :ensure t
-  :defer 3
-  :config
-  (add-hook 'term-mode-hook (lambda ()
-                              (define-key term-raw-map (kbd "C-y") 'term-paste)))
-  (setq multi-term-program "/usr/local/bin/zsh"))
+(if (not (or (eq system-type 'windows-nt)
+             (eq system-type 'w32)))
+    (use-package multi-term
+      :ensure t
+      :defer 3
+      :config
+      (add-hook 'term-mode-hook (lambda ()
+                                  (define-key term-raw-map (kbd "C-y") 'term-paste)))
+      (setq multi-term-program "/usr/local/bin/zsh")))
 
 
 
