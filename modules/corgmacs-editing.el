@@ -63,19 +63,6 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; undo tree
-;;
-;; Rebind the undo and redo commands to undo tree
-(use-package undo-tree
-  :ensure t
-  :defer 2
-  :config
-  (global-undo-tree-mode 1)
-  (global-unset-key (kbd "C-/"))
-  (global-set-key (kbd "C-/") 'undo)
-  (global-set-key (kbd "C-?") 'undo-tree-redo))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; better beginning of line
 ;;
 ;; From https://github.com/howardabrams/dot-files/blob/master/emacs-fixes.org

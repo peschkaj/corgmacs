@@ -103,7 +103,7 @@
 
 ;; TODO add check that this file exists
 (let ((corgmacs/local-customizations
-      (expand-file-name "corgmacs-custom.el" corgmacs/dotfiles-dir)))
+       (expand-file-name "corgmacs-custom.el" corgmacs/dotfiles-dir)))
   (if (file-readable-p corgmacs/local-customizations)
       (load-file corgmacs/local-customizations)))
 
@@ -186,7 +186,7 @@
 (use-package markdown-mode
   :ensure t
   :config (autoload 'gfm-mode "markdown-mode"
-   "Major mode for editing GitHub Flavored Markdown files" t))
+            "Major mode for editing GitHub Flavored Markdown files" t))
 
 
 
@@ -240,7 +240,6 @@
   :config
 
   (setq spaceline-all-the-icons-separator-type 'none)
-  ;(setq spaceline-all-the-icons-separator-type 'arrow)
   (setq spaceline-all-the-icons-icon-set-modified 'circle)
 
   (spaceline-toggle-all-the-icons-vc-icon-on)
@@ -324,7 +323,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-)
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

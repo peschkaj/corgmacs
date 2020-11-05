@@ -72,6 +72,8 @@
   ;;(magit-define-popup-switch 'magit-pull-popup ?r "Rebase" "--rebase")
   )
 
+
+
 ;; Package `gh' provides an Elisp interface to the GitHub API.
 (use-package gh
   :ensure t
@@ -131,14 +133,6 @@ provide such a commit message."
   ;; https://chris.beams.io/posts/git-commit/.
   (setq git-commit-summary-max-length 50))
 
-(use-package exec-path-from-shell
-    :ensure t
-    :config(exec-path-from-shell-initialize))
-
-;; (when (memq window-system '(mac ns))
-;;   (use-package exec-path-from-shell
-;;     :ensure t
-;;     :config(exec-path-from-shell-initialize)))
 
 
   ;; Disables pdf-tools using unicode symbols on the mode line
@@ -171,6 +165,7 @@ provide such a commit message."
                ("b"  . pdf-view-set-slice-from-bounding-box)
                ("r"  . pdf-view-reset-slice))
     (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+
 
 
 (provide 'corgmacs-vc)
